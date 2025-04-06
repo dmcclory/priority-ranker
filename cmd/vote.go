@@ -16,17 +16,14 @@ var choice = ""
 // voteCmd represents the vote command
 var voteCmd = &cobra.Command{
 	Use:   "vote",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Choose between two random options",
+	Long: `Two options will be randomly drawn from the active list.
+	You can choose which is more important (according to whatever prioritization criteria you like).
+	The choice will be recorded and used as part of the ranking computation`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("vote called")
 		huh.NewSelect[string]().
-		  Title("Which would you like to do first?").
+		  Title("Which is more important?").
 			Options(
 				huh.NewOption("Cool Choice 1", "cool-choice"),
 				huh.NewOption("Cool Choice 2", "cool-choice-2"),

@@ -14,13 +14,10 @@ import (
 
 var resultsCmd = &cobra.Command{
 	Use:   "results",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "See the ranking of the options",
+	Long: `Prints a table of the relative ranking of the options, based on your vote history.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	It takes ~30 votes to start to get meaningful data.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("results called")
 
