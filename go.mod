@@ -1,4 +1,4 @@
-module github.com/dmcclory/priority-ranker
+module github.com/dmcclory/ranker
 
 go 1.21.4
 
@@ -35,4 +35,4 @@ require (
 	golang.org/x/text v0.18.0 // indirect
 )
 
-replace github.com/dmcclory/priority-ranker => ../priority-ranker
+replace github.com/dmcclory/ranker => ../ranker
