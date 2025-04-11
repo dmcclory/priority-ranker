@@ -5,15 +5,30 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"strconv"
+	"strings"
 
 	ltable "github.com/charmbracelet/lipgloss/table"
 	"github.com/spf13/cobra"
 )
 
 
+func check(e error) {
+  if e != nil {
+    panic(e)
+  }
+}
+
 func loadActiveProject() string {
 	return "first-list"
+}
+
+func loadActiveProjectFromFile() string {
+	data, err := os.ReadFile("/Users/dan/.ranker/active-list")
+	check(err)
+
+	return strings.TrimSpace(string(data))
 }
 
 type ChoiceList struct {
@@ -76,12 +91,12 @@ var listCmd = &cobra.Command{
 	Use the init, delete, and switch subcommands on individual lists.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		lists := getLists()
-		activeList := loadActiveProject()
 
 		if len(lists) == 0 {
 		  fmt.Println(emptyStateMessage())
 		} else {
-			// gotta figure out how to make 1 entry be 'active'
+			// gotta figure out how to test this method
+			activeList := loadActiveProjectFromFile()
 			lists = markActiveListEntry(lists, activeList)
 			fmt.Println(formatTable(lists))
 		}
