@@ -1,12 +1,13 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/charmbracelet/huh"
 	"github.com/spf13/cobra"
 )
 
@@ -16,8 +17,23 @@ var listSwitchCmd = &cobra.Command{
 	Short: "Switch to another list",
 	Long: `Sets the current active list to the one provided.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("listSwitch called")
-		fmt.Println("dont forget to check that the input list exists before switching to it")
+		lists := getLists()
+		var newId string
+		options := []huh.Option[string]{}
+		for _, list := range lists {
+			options = append(options, huh.NewOption(list.Name, list.Id))
+		}
+		f := huh.NewSelect[string]().Title("Switch list:").Options(
+			options...
+		).Value(&newId)
+    if err := f.Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "Oof: %v\n", err)
+		}
+
+		fmt.Println("updating the active list to: ", newId)
+
+		updateActiveList(newId)
+		fmt.Println("(dont forget to check that the input list exists before switching to it)")
 	},
 }
 

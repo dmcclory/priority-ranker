@@ -5,31 +5,12 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"strconv"
-	"strings"
 
 	ltable "github.com/charmbracelet/lipgloss/table"
 	"github.com/spf13/cobra"
 )
 
-
-func check(e error) {
-  if e != nil {
-    panic(e)
-  }
-}
-
-func loadActiveProject() string {
-	return "first-list"
-}
-
-func loadActiveProjectFromFile() string {
-	data, err := os.ReadFile("/Users/dan/.ranker/active-list")
-	check(err)
-
-	return strings.TrimSpace(string(data))
-}
 
 type ChoiceList struct {
 	Name string
