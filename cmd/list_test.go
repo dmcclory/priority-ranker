@@ -5,21 +5,23 @@ import (
 	"testing"
 )
 
+func getLists() []ChoiceList {
+	return []ChoiceList{
+		{Id: "first-list", Name: "First List"},
+		{Id: "second-list", Name: "Second List"},
+		{Id: "third-list", Name: "Third List"},
+	}
+}
+
+func getEmptyListResult() []ChoiceList {
+	return []ChoiceList{}
+}
+
 func TestGetLists(t *testing.T) {
 	res := getLists()
 
 	if res[0].Id != "first-list" {
 		t.Errorf("no! fail!")
-	}
-}
-
-func TestListNames(t *testing.T) {
-	lists := getLists()
-
-	names := getListNames(lists)
-
-	if names[0] != "First List" {
-		t.Errorf("the test failed")
 	}
 }
 

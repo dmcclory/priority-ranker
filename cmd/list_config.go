@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"encoding/json"
 	"os"
-	"strings"
 )
 
 func check(e error) {
@@ -11,18 +11,29 @@ func check(e error) {
   }
 }
 
-func loadActiveProject() string {
-	return "first-list"
+func updateActiveList(listId string, lists ListConfig) {
+	lists.ActiveList = listId
+	data, err := json.Marshal(lists)
+	check(err)
+	err = os.WriteFile("/Users/dan/.ranker/config.json", data, 0644)
+	check(err)
 }
 
-func loadActiveProjectFromFile() string {
-	data, err := os.ReadFile("/Users/dan/.ranker/active-list")
-	check(err)
-
-	return strings.TrimSpace(string(data))
+type ListConfig struct {
+	ActiveList string `json:"active"`
+	Lists []ChoiceList `json:"lists"`
 }
 
-func updateActiveList(listId string) {
-	err := os.WriteFile("/Users/dan/.ranker/active-list", []byte(listId), 0644)
+func loadLists() ListConfig {
+	data, err := os.ReadFile("/Users/dan/.ranker/config.json")
 	check(err)
+
+	var result ListConfig
+
+	// whoa -> this is important -> if you don't check that it fails
+	// you'll get an empty object, that is no good!
+	err = json.Unmarshal(data, &result)
+	check(err)
+
+	return result
 }

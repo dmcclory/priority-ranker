@@ -18,25 +18,6 @@ type ChoiceList struct {
 	Active bool
 }
 
-func getLists() []ChoiceList {
-	return []ChoiceList{
-		{Id: "first-list", Name: "First List"},
-		{Id: "second-list", Name: "Second List"},
-		{Id: "third-list", Name: "Third List"},
-	}
-}
-
-func getEmptyListResult() []ChoiceList {
-	return []ChoiceList{}
-}
-
-func getListNames(lists []ChoiceList) []string {
-	var names []string
-	for _, list := range lists {
-		names = append(names, list.Name)
-	}
-	return names
-}
 
 func markActiveListEntry(lists []ChoiceList, activeList string) []ChoiceList {
 	for i := range lists {
@@ -71,14 +52,13 @@ var listCmd = &cobra.Command{
 	Long: `This is a shell command that shows all of the current lists.
 	Use the init, delete, and switch subcommands on individual lists.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		lists := getLists()
+		listData := loadLists()
 
-		if len(lists) == 0 {
+		if len(listData.Lists) == 0 {
 		  fmt.Println(emptyStateMessage())
 		} else {
 			// gotta figure out how to test this method
-			activeList := loadActiveProjectFromFile()
-			lists = markActiveListEntry(lists, activeList)
+			lists := markActiveListEntry(listData.Lists, listData.ActiveList)
 			fmt.Println(formatTable(lists))
 		}
 	},
