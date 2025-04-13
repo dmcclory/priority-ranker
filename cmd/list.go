@@ -12,13 +12,6 @@ import (
 )
 
 
-type ChoiceList struct {
-	Name string
-	Id string
-	Active bool
-}
-
-
 func markActiveListEntry(lists []ChoiceList, activeList string) []ChoiceList {
 	for i := range lists {
 		if lists[i].Id == activeList {

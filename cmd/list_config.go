@@ -5,6 +5,18 @@ import (
 	"os"
 )
 
+type ChoiceList struct {
+	Name string
+	Id string
+	Active bool
+	DbExists bool
+}
+
+type ListConfig struct {
+	ActiveList string `json:"active"`
+	Lists []ChoiceList `json:"lists"`
+}
+
 func check(e error) {
   if e != nil {
     panic(e)
@@ -17,11 +29,6 @@ func updateActiveList(listId string, lists ListConfig) {
 	check(err)
 	err = os.WriteFile("/Users/dan/.ranker/config.json", data, 0644)
 	check(err)
-}
-
-type ListConfig struct {
-	ActiveList string `json:"active"`
-	Lists []ChoiceList `json:"lists"`
 }
 
 func loadLists() ListConfig {
