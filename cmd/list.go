@@ -12,15 +12,6 @@ import (
 )
 
 
-func markActiveListEntry(lists []ChoiceList, activeList string) []ChoiceList {
-	for i := range lists {
-		if lists[i].Id == activeList {
-			lists[i].Active = true
-		}
-	}
-	return lists
-}
-
 func formatTable(lists []ChoiceList) string {
 	var rows [][]string
 
@@ -51,7 +42,12 @@ var listCmd = &cobra.Command{
 		  fmt.Println(emptyStateMessage())
 		} else {
 			// gotta figure out how to test this method
-			lists := markActiveListEntry(listData.Lists, listData.ActiveList)
+			// lists := markListEntryAsActiveMap(listData, listData.ActiveList)
+			markListEntryAsActive(listData.ActiveList, listData)
+			lists := []ChoiceList{}
+			for _, v := range listData.Lists {
+				lists = append(lists, v)
+			}
 			fmt.Println(formatTable(lists))
 		}
 	},

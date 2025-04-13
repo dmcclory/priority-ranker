@@ -25,18 +25,6 @@ func TestGetLists(t *testing.T) {
 	}
 }
 
-func TestMarkListNames(t *testing.T) {
-	lists := getLists()
-
-	lists[1].Active = false
-
-	lists = markActiveListEntry(lists, lists[1].Id)
-
-	if lists[1].Active != true {
-		t.Errorf("markActiveListEntry failed to update the correct list")
-	}
-}
-
 func TestEmptyStateMessage(t *testing.T) {
 	msg := emptyStateMessage()
 
