@@ -28,12 +28,13 @@ var listSwitchCmd = &cobra.Command{
 		).Value(&newId)
     if err := f.Run(); err != nil {
 			fmt.Fprintf(os.Stderr, "Oof: %v\n", err)
+		} else {
+			fmt.Println("updating the active list to: ", newId)
+
+			updateActiveList(newId, lists)
+			fmt.Println("(dont forget to check that the input list exists before switching to it)")
 		}
 
-		fmt.Println("updating the active list to: ", newId)
-
-		updateActiveList(newId, lists)
-		fmt.Println("(dont forget to check that the input list exists before switching to it)")
 	},
 }
 
