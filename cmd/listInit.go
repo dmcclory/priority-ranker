@@ -20,6 +20,14 @@ var listInitCmd = &cobra.Command{
 	You can pass in a path to a file of options. Each unique line in the file will be stored as an option`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("listInit called")
+		lists := loadLists()
+		listName := args[0]
+		lists, err := addNewChoiceList(lists, listName)
+		check(err)
+
+		persistListConfig(lists)
+
+		fmt.Println("new list created & set to active")
 	},
 }
 

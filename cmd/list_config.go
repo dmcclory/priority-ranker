@@ -6,6 +6,8 @@ import (
 	"path"
 	"regexp"
 	"strings"
+	"time"
+	"fmt"
 )
 
 type ChoiceList struct {
@@ -13,8 +15,10 @@ type ChoiceList struct {
 	Id string
 	Active bool
 	DbExists bool
-	CreatedAt int
+	CreatedAt int64
 }
+
+var ChoiceListExists = fmt.Errorf("Entry already exists in List config")
 
 func configPath() string {
 	homedir, err := os.UserHomeDir()
@@ -86,11 +90,29 @@ func loadLists() ListConfig {
 	err = json.Unmarshal(data, &result)
 	check(err)
 
-	for k, _ := range result.Lists {
+	// for k, _ := range result.Lists {
+	for k := range result.Lists {
 		markListEntryAsHavingDb(k, result)
 	}
 
 	return result
+}
+
+func addNewChoiceList(lists ListConfig, listName string) (ListConfig, error) {
+  listId := generateId(listName)
+	createdAt := time.Now().Unix()
+
+	_, present := lists.Lists[listId]
+
+	if present {
+		return ListConfig{}, ChoiceListExists
+	}
+
+	newChoiceList :=  ChoiceList{Name: listName, Id: listId, CreatedAt: createdAt}
+	lists.Lists[listId] = newChoiceList
+	lists.ActiveList = listId
+
+	return lists, nil
 }
 
 func generateId(listName string) string {

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"testing"
 )
 
@@ -31,4 +32,35 @@ func TestGenerateId(t *testing.T) {
 	if id != "input-is-good" {
 		t.Errorf("TestGenerateId failed. expected: 'input-is-good', actual: %s", id)
 	}
+}
+
+func TestAddNewChoiceHappyPath(t *testing.T) {
+	lists := getListsAsMap()
+	listName := "Fourth List"
+
+	lists, err := addNewChoiceList(lists, listName)
+
+	check(err)
+
+	_, newOptionPresent := lists.Lists["fourth-list"]
+
+	if newOptionPresent != true {
+		t.Errorf("TestAddNewChoiceHappyPath failed to add the new list to the set of lists")
+	}
+
+	if lists.ActiveList != "fourth-list" {
+		t.Errorf("TestAddNewChoiceHappyPath failed to set the new list to the active list")
+	}
+}
+
+func TestAddNewChoiceProjectAlreadyExists(t *testing.T) {
+	lists := getListsAsMap()
+	listName := "First List"
+
+	_, err := addNewChoiceList(lists, listName)
+
+	if !errors.Is(err, ChoiceListExists) {
+		t.Errorf("Error expected, but the function returned success")
+	}
+
 }
