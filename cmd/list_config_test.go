@@ -24,3 +24,11 @@ func TestMarkActiveMap(t *testing.T) {
 		t.Errorf("markActiveListEntry failed to update the correct list")
 	}
 }
+
+func TestGenerateId(t *testing.T) {
+	id := generateId("Input Is Good")
+
+	if id != "input-is-good" {
+		t.Errorf("TestGenerateId failed. expected: 'input-is-good', actual: %s", id)
+	}
+}

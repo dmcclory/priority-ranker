@@ -3,6 +3,8 @@ package cmd
 import (
 	"encoding/json"
 	"os"
+	"regexp"
+	"strings"
 )
 
 type ChoiceList struct {
@@ -54,4 +56,15 @@ func loadLists() ListConfig {
 	check(err)
 
 	return result
+}
+
+func generateId(listName string) string {
+
+	// https://pkg.go.dev/regexp/syntax
+	re := regexp.MustCompile(`[^[:alnum:]]+`)
+
+	// https://pkg.go.dev/regexp#Regexp.ReplaceAllString
+	id := strings.ToLower(re.ReplaceAllString(listName, "-"))
+
+	return id
 }
