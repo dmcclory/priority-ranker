@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"os"
+	"path"
 	"regexp"
 	"strings"
 )
@@ -12,6 +13,12 @@ type ChoiceList struct {
 	Id string
 	Active bool
 	DbExists bool
+}
+
+func configPath() string {
+	homedir, err := os.UserHomeDir()
+	check(err)
+	return path.Join(homedir, ".ranker", "config.json")
 }
 
 type ListConfig struct {
@@ -33,7 +40,7 @@ func updateActiveList(listId string, lists ListConfig) {
 func persistListConfig(lists ListConfig) {
 	data, err := json.Marshal(lists)
 	check(err)
-	err = os.WriteFile("/Users/dan/.ranker/config_as_map.json", data, 0644)
+	err = os.WriteFile(configPath(), data, 0644)
 	check(err)
 }
 
@@ -45,7 +52,7 @@ func markListEntryAsActive(listId string, lists ListConfig) {
 }
 
 func loadLists() ListConfig {
-	data, err := os.ReadFile("/Users/dan/.ranker/config_as_map.json")
+	data, err := os.ReadFile(configPath())
 	check(err)
 
 	var result ListConfig
