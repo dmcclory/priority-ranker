@@ -19,12 +19,16 @@ func formatTable(lists []ChoiceList) string {
 	for _, list := range lists {
 		created := time.Unix(int64(list.CreatedAt), 0)
 		timestamp := fmt.Sprintf("%d/%d/%d", created.Year(), created.Month(), created.Day())
-		rows = append(rows, []string{list.Name, strconv.FormatBool(list.Active), timestamp})
+		var warning string
+    if !list.DbExists {
+			warning = "DB is missing"
+		}
+		rows = append(rows, []string{list.Name, strconv.FormatBool(list.Active), timestamp, warning})
 	}
 
 	// this -> https://github.com/charmbracelet/lipgloss/blob/master/table/table_test.go
 	// was helpful for understanding how to construct these tables
-	table := ltable.New().Rows(rows...).Headers("List", "Active", "Created On")
+	table := ltable.New().Rows(rows...).Headers("List", "Active", "Created On", "Warning")
 
 	return table.Render()
 }

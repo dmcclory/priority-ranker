@@ -22,6 +22,12 @@ func configPath() string {
 	return path.Join(homedir, ".ranker", "config.json")
 }
 
+func dbPath(listId string) string {
+	homedir, err := os.UserHomeDir()
+	check(err)
+	return path.Join(homedir, ".ranker", listId + ".sqlite")
+}
+
 type ListConfig struct {
 	ActiveList string `json:"active"`
 	Lists map[string]ChoiceList `json:"lists"`
@@ -52,6 +58,23 @@ func markListEntryAsActive(listId string, lists ListConfig) {
 	lists.Lists[listId] = listCopy
 }
 
+func markListEntryAsHavingDb(listId string, lists ListConfig) {
+	var exists bool
+
+	_, err := os.Stat(dbPath(listId))
+
+	if os.IsNotExist(err) {
+		exists = false
+	} else {
+		check(err)
+		exists = true
+	}
+
+	listCopy := lists.Lists[listId]
+	listCopy.DbExists = exists
+	lists.Lists[listId] = listCopy
+}
+
 func loadLists() ListConfig {
 	data, err := os.ReadFile(configPath())
 	check(err)
@@ -62,6 +85,10 @@ func loadLists() ListConfig {
 	// you'll get an empty object, that is no good!
 	err = json.Unmarshal(data, &result)
 	check(err)
+
+	for k, _ := range result.Lists {
+		markListEntryAsHavingDb(k, result)
+	}
 
 	return result
 }
