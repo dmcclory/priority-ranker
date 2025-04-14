@@ -13,6 +13,7 @@ type ChoiceList struct {
 	Id string
 	Active bool
 	DbExists bool
+	CreatedAt int
 }
 
 func configPath() string {
