@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
+	"os"
 	"testing"
 )
 
@@ -63,4 +65,60 @@ func TestAddNewChoiceProjectAlreadyExists(t *testing.T) {
 		t.Errorf("Error expected, but the function returned success")
 	}
 
+}
+
+func TestSettingHomeDir(t *testing.T) {
+	tempdir, err := os.MkdirTemp("", "test")
+	check(err)
+	t.Setenv("RANKER_DIR", tempdir)
+
+	persistListConfig(getListsAsMap())
+
+	lists := loadLists()
+
+	if lists.ActiveList != "first-list" {
+		t.Errorf("SettingHomeDir - does not have expected active list ID")
+	}
+}
+
+func TestLoadListsWhenConfigDoesNotExistYet(t *testing.T) {
+	tempdir, err := os.MkdirTemp("", "test")
+	check(err)
+	t.Setenv("RANKER_DIR", tempdir)
+	
+	lists := loadLists()
+
+	if lists.ActiveList != "" {
+		t.Errorf("Loading Empty state test, expected ActiveList to be blank")
+	}
+
+	if len(lists.Lists) != 0 {
+		t.Errorf("Loading Empty state test, expected Lists to be an empty map")
+	}
+}
+
+func TestMarkEntryAsHavingDb(t *testing.T) {
+	tempdir, err := os.MkdirTemp("", "test")
+	check(err)
+	t.Setenv("RANKER_DIR", tempdir)
+
+	persistListConfig(getListsAsMap())
+
+	err = os.WriteFile(dbPath("first-list"), []byte("data"), 0644)
+	check(err)
+
+	lists := loadLists()
+
+	fmt.Println("got this", lists)
+
+	markListEntryAsHavingDb("first-list", lists)
+	markListEntryAsHavingDb("second-list", lists)
+
+	if lists.Lists["first-list"].DbExists == false {
+		t.Errorf("TestMarkEntryAsHavingDb - first-list was expected to be true but was false")
+	}
+
+	if lists.Lists["second-list"].DbExists == true {
+		t.Errorf("TestMarkEntryAsHavingDb - second-list was expected to be false but was true")
+	}
 }

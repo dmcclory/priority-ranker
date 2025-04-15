@@ -20,16 +20,27 @@ type ChoiceList struct {
 
 var ChoiceListExists = fmt.Errorf("Entry already exists in List config")
 
-func configPath() string {
+func rankerDir() string {
+	// home
+	rankerDir := os.Getenv("RANKER_DIR")
+
+	if len(rankerDir) > 0 {
+		return rankerDir
+	}
+
 	homedir, err := os.UserHomeDir()
 	check(err)
-	return path.Join(homedir, ".ranker", "config.json")
+	return path.Join(homedir, ".ranker")
+}
+
+func configPath() string {
+	dir := rankerDir()
+	return path.Join(dir, "config.json")
 }
 
 func dbPath(listId string) string {
-	homedir, err := os.UserHomeDir()
-	check(err)
-	return path.Join(homedir, ".ranker", listId + ".sqlite")
+	dir := rankerDir()
+	return path.Join(dir, listId + ".sqlite")
 }
 
 type ListConfig struct {
@@ -62,6 +73,15 @@ func markListEntryAsActive(listId string, lists ListConfig) {
 	lists.Lists[listId] = listCopy
 }
 
+func fileDoesNotExist(path string) bool {
+	_, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		return true
+	} else {
+		return false
+	}
+}
+
 func markListEntryAsHavingDb(listId string, lists ListConfig) {
 	var exists bool
 
@@ -80,6 +100,10 @@ func markListEntryAsHavingDb(listId string, lists ListConfig) {
 }
 
 func loadLists() ListConfig {
+	if fileDoesNotExist(configPath()) {
+		return ListConfig{}
+	}
+
 	data, err := os.ReadFile(configPath())
 	check(err)
 
