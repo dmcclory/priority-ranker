@@ -137,3 +137,44 @@ func TestCreateEmptyDbSavesAFileWithTheId(t *testing.T) {
 
 	persistListConfig(getListsAsMap())
 }
+
+func TestDeleteListWithInvalidListId(t *testing.T) {
+	lists := loadLists()
+
+	_, err := deleteList(lists, "missing-id")
+
+	if !errors.Is(err, ChoiceListMissing) {
+		t.Errorf("Expected to get a ChoiceListMissing error, but did not")
+	}
+}
+
+func TestDeleteListRemovesEntryAndFile(t *testing.T) {
+	tempdir, err := os.MkdirTemp("", "test")
+	check(err)
+	t.Setenv("RANKER_DIR", tempdir)
+
+	lists := getListsAsMap()
+
+	err = createEmptyDb("first-list")
+	check(err)
+
+	lists, err = deleteList(lists, "first-list")
+
+	if err != nil {
+		t.Errorf("Expected err to be nil, but got %s", err)
+	}
+
+	if fileExists(dbPath("first-list")) {
+		t.Errorf("Expected the list's database file to be deleted, but it was not")
+	}
+
+	_, listPresent := lists.Lists["first-list"]
+
+	if listPresent {
+		t.Errorf("Expected the list's to be removed from the set of lists in the config, but it was not")
+	}
+
+	if lists.ActiveList != "" {
+		t.Errorf("Expected the active list value to be cleared out, but it was not")
+	}
+}

@@ -19,6 +19,7 @@ type ChoiceList struct {
 }
 
 var ChoiceListExists = fmt.Errorf("Entry already exists in List config")
+var ChoiceListMissing = fmt.Errorf("Entry already does not exist in List config")
 
 func rankerDir() string {
 	// home
@@ -165,4 +166,24 @@ func generateId(listName string) string {
 	id := strings.ToLower(re.ReplaceAllString(listName, "-"))
 
 	return id
+}
+
+func deleteList(lists ListConfig, listId string) (ListConfig, error) {
+	_, listPresent := lists.Lists[listId]
+	if !listPresent {
+		return ListConfig{}, ChoiceListMissing
+	}
+
+	err := os.Remove(dbPath(listId))
+	if err != nil {
+		return ListConfig{}, err
+	}
+
+	if lists.ActiveList == listId {
+		lists.ActiveList = ""
+	}
+
+	delete(lists.Lists, listId)
+
+	return lists, nil
 }
