@@ -16,7 +16,19 @@ var listDeleteCmd = &cobra.Command{
 	Short: "Delete a list",
 	Long: `Deletes the list. Be careful! This operation is irreversible`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("listDelete called")
+		lists := loadLists()
+		listId := args[0]
+		_, present := lists.Lists[listId]
+
+		if !present {
+			fmt.Printf("%s is not a list, exiting\n", listId)
+			return
+		}
+
+		lists, err := deleteList(lists, listId)
+		check(err)
+		persistListConfig(lists)
+		fmt.Printf("successfully deleted %s", listId)
 	},
 }
 

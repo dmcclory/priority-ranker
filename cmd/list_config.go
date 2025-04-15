@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 	"fmt"
+	"errors"
 )
 
 type ChoiceList struct {
@@ -19,7 +20,7 @@ type ChoiceList struct {
 }
 
 var ChoiceListExists = fmt.Errorf("Entry already exists in List config")
-var ChoiceListMissing = fmt.Errorf("Entry already does not exist in List config")
+var ChoiceListMissing = fmt.Errorf("Entry does not exist in List config")
 
 func rankerDir() string {
 	// home
@@ -175,7 +176,7 @@ func deleteList(lists ListConfig, listId string) (ListConfig, error) {
 	}
 
 	err := os.Remove(dbPath(listId))
-	if err != nil {
+	if !errors.Is(err, os.ErrNotExist) {
 		return ListConfig{}, err
 	}
 
