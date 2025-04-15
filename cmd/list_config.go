@@ -82,6 +82,15 @@ func fileDoesNotExist(path string) bool {
 	}
 }
 
+func fileExists(path string) bool {
+	_, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		return false
+	} else {
+		return true
+	}
+}
+
 func markListEntryAsHavingDb(listId string, lists ListConfig) {
 	var exists bool
 
@@ -137,6 +146,14 @@ func addNewChoiceList(lists ListConfig, listName string) (ListConfig, error) {
 	lists.ActiveList = listId
 
 	return lists, nil
+}
+
+func createEmptyDb(listId string) error {
+	path := dbPath(listId)
+
+	err := os.WriteFile(path, []byte("data"), 0644)
+
+	return err
 }
 
 func generateId(listName string) string {

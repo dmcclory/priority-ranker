@@ -6,7 +6,7 @@ package cmd
 
 import (
 	"fmt"
-
+	"errors"
 	"github.com/spf13/cobra"
 )
 
@@ -23,11 +23,20 @@ var listInitCmd = &cobra.Command{
 		lists := loadLists()
 		listName := args[0]
 		lists, err := addNewChoiceList(lists, listName)
-		check(err)
+		if errors.Is(err, ChoiceListExists) {
+			fmt.Printf("A file already exists named %s, remove it or pick a new name\n", listName)
+			return
+		}
 
-		persistListConfig(lists)
+		newListId := lists.ActiveList
+		if fileExists(dbPath(newListId)) {
+			fmt.Printf("A file already exists at %s, remove it or pick a new name\n", dbPath(newListId))
+		} else {
+			createEmptyDb(newListId)
+			persistListConfig(lists)
+			fmt.Println("new list created & set to active")
+		}
 
-		fmt.Println("new list created & set to active")
 	},
 }
 

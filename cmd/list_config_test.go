@@ -122,3 +122,18 @@ func TestMarkEntryAsHavingDb(t *testing.T) {
 		t.Errorf("TestMarkEntryAsHavingDb - second-list was expected to be false but was true")
 	}
 }
+
+func TestCreateEmptyDbSavesAFileWithTheId(t *testing.T) {
+	tempdir, err := os.MkdirTemp("", "test")
+	check(err)
+	t.Setenv("RANKER_DIR", tempdir)
+
+	err = createEmptyDb("test-db")
+	check(err)
+
+	if fileDoesNotExist(dbPath("test-db")) {
+		t.Errorf("expected to find a database for test-db in the temp directory, but none was found")
+	}
+
+	persistListConfig(getListsAsMap())
+}
