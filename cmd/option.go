@@ -14,6 +14,7 @@ import (
 var optionCmd = &cobra.Command{
 	Use:   "option",
 	Short: "A brief description of your command",
+	Aliases: []string{"options"},
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
