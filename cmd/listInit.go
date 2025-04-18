@@ -32,7 +32,7 @@ var listInitCmd = &cobra.Command{
 		if fileExists(dbPath(newListId)) {
 			fmt.Printf("A file already exists at %s, remove it or pick a new name\n", dbPath(newListId))
 		} else {
-			createEmptyDb(newListId)
+			initDb(dbPath(newListId))
 			persistListConfig(lists)
 			fmt.Println("new list created & set to active")
 		}

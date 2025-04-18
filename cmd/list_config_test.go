@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"testing"
 )
@@ -109,8 +108,6 @@ func TestMarkEntryAsHavingDb(t *testing.T) {
 
 	lists := loadLists()
 
-	fmt.Println("got this", lists)
-
 	markListEntryAsHavingDb("first-list", lists)
 	markListEntryAsHavingDb("second-list", lists)
 
@@ -128,7 +125,7 @@ func TestCreateEmptyDbSavesAFileWithTheId(t *testing.T) {
 	check(err)
 	t.Setenv("RANKER_DIR", tempdir)
 
-	err = createEmptyDb("test-db")
+	_, err = initDb(dbPath("test-db"))
 	check(err)
 
 	if fileDoesNotExist(dbPath("test-db")) {
@@ -155,7 +152,7 @@ func TestDeleteListRemovesEntryAndFile(t *testing.T) {
 
 	lists := getListsAsMap()
 
-	err = createEmptyDb("first-list")
+	_, err = initDb(dbPath("test-db"))
 	check(err)
 
 	lists, err = deleteList(lists, "first-list")

@@ -10,18 +10,24 @@ type Option struct {
 	Label string
 }
 
-func loadDb(path string) *gorm.DB {
+func loadDb(path string) (*gorm.DB, error) {
 	db, err := gorm.Open(sqlite.Open(path), &gorm.Config{})
-	check(err)
-	return db
+	if err != nil {
+		return &gorm.DB{}, err
+	}
+	return db, nil
 }
 
-func initDb(path string) *gorm.DB {
-	db := loadDb(path)
+func initDb(path string) (*gorm.DB, error) {
+	db, err := loadDb(path)
+
+	if err != nil {
+		return &gorm.DB{}, err
+	}
 
 	db.AutoMigrate(&Option{})
 
-	return db
+	return db, nil
 }
 
 func loadOptions(db *gorm.DB) []Option {

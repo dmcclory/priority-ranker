@@ -25,7 +25,8 @@ to quickly create a Cobra application.`,
 		fmt.Println("option called")
 	 	// db := initDb(dbPath("sqlite-testing"))
 	  // db.Create(&Option{Label: "Test Option"})
-	 	db := loadDb(dbPath("sqlite-testing"))
+    db, err := loadDb(dbPath("sqlite-testing"))
+		check(err)
 		options := loadOptions(db)
 		for _, option := range options {
 			fmt.Println("option: ", option.Label)
