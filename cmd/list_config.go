@@ -11,7 +11,7 @@ import (
 	"errors"
 )
 
-type ChoiceList struct {
+type OptionList struct {
 	Name string
 	Id string
 	Active bool
@@ -19,8 +19,8 @@ type ChoiceList struct {
 	CreatedAt int64
 }
 
-var ChoiceListExists = fmt.Errorf("Entry already exists in List config")
-var ChoiceListMissing = fmt.Errorf("Entry does not exist in List config")
+var OptionListExists = fmt.Errorf("Entry already exists in List config")
+var OptionListMissing = fmt.Errorf("Entry does not exist in List config")
 
 func rankerDir() string {
 	// home
@@ -47,7 +47,7 @@ func dbPath(listId string) string {
 
 type ListConfig struct {
 	ActiveList string `json:"active"`
-	Lists map[string]ChoiceList `json:"lists"`
+	Lists map[string]OptionList `json:"lists"`
 }
 
 func check(e error) {
@@ -133,18 +133,18 @@ func loadLists() ListConfig {
 	return result
 }
 
-func addNewChoiceList(lists ListConfig, listName string) (ListConfig, error) {
+func addNewOptionList(lists ListConfig, listName string) (ListConfig, error) {
   listId := generateId(listName)
 	createdAt := time.Now().Unix()
 
 	_, present := lists.Lists[listId]
 
 	if present {
-		return ListConfig{}, ChoiceListExists
+		return ListConfig{}, OptionListExists
 	}
 
-	newChoiceList :=  ChoiceList{Name: listName, Id: listId, CreatedAt: createdAt}
-	lists.Lists[listId] = newChoiceList
+	newOptionList :=  OptionList{Name: listName, Id: listId, CreatedAt: createdAt}
+	lists.Lists[listId] = newOptionList
 	lists.ActiveList = listId
 
 	return lists, nil
@@ -172,7 +172,7 @@ func generateId(listName string) string {
 func deleteList(lists ListConfig, listId string) (ListConfig, error) {
 	_, listPresent := lists.Lists[listId]
 	if !listPresent {
-		return ListConfig{}, ChoiceListMissing
+		return ListConfig{}, OptionListMissing
 	}
 
 	err := os.Remove(dbPath(listId))

@@ -5,16 +5,16 @@ import (
 	"testing"
 )
 
-func getLists() []ChoiceList {
-	return []ChoiceList{
+func getLists() []OptionList {
+	return []OptionList{
 		{Id: "first-list", Name: "First List"},
 		{Id: "second-list", Name: "Second List"},
 		{Id: "third-list", Name: "Third List"},
 	}
 }
 
-func getEmptyListResult() []ChoiceList {
-	return []ChoiceList{}
+func getEmptyListResult() []OptionList {
+	return []OptionList{}
 }
 
 func TestGetLists(t *testing.T) {

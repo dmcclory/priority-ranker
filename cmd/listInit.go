@@ -22,8 +22,8 @@ var listInitCmd = &cobra.Command{
 		fmt.Println("listInit called")
 		lists := loadLists()
 		listName := args[0]
-		lists, err := addNewChoiceList(lists, listName)
-		if errors.Is(err, ChoiceListExists) {
+		lists, err := addNewOptionList(lists, listName)
+		if errors.Is(err, OptionListExists) {
 			fmt.Printf("A file already exists named %s, remove it or pick a new name\n", listName)
 			return
 		}

@@ -13,7 +13,7 @@ import (
 )
 
 
-func formatTable(lists []ChoiceList) string {
+func formatTable(lists []OptionList) string {
 	var rows [][]string
 
 	for _, list := range lists {
@@ -51,7 +51,7 @@ var listCmd = &cobra.Command{
 			// gotta figure out how to test this method
 			// lists := markListEntryAsActiveMap(listData, listData.ActiveList)
 			markListEntryAsActive(listData.ActiveList, listData)
-			lists := []ChoiceList{}
+			lists := []OptionList{}
 			for _, v := range listData.Lists {
 				lists = append(lists, v)
 			}

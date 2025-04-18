@@ -10,7 +10,7 @@ import (
 func getListsAsMap() ListConfig{
 	return ListConfig{
 		ActiveList: "first-list",
-		Lists: map[string]ChoiceList{
+		Lists: map[string]OptionList{
 			"first-list": {Id: "first-list", Name: "First List"},
 			"second-list": {Id: "second-list", Name: "Second List"},
 			"third-list": {Id: "third-list", Name: "Third List"},
@@ -40,7 +40,7 @@ func TestAddNewChoiceHappyPath(t *testing.T) {
 	lists := getListsAsMap()
 	listName := "Fourth List"
 
-	lists, err := addNewChoiceList(lists, listName)
+	lists, err := addNewOptionList(lists, listName)
 
 	check(err)
 
@@ -59,9 +59,9 @@ func TestAddNewChoiceProjectAlreadyExists(t *testing.T) {
 	lists := getListsAsMap()
 	listName := "First List"
 
-	_, err := addNewChoiceList(lists, listName)
+	_, err := addNewOptionList(lists, listName)
 
-	if !errors.Is(err, ChoiceListExists) {
+	if !errors.Is(err, OptionListExists) {
 		t.Errorf("Error expected, but the function returned success")
 	}
 
@@ -143,8 +143,8 @@ func TestDeleteListWithInvalidListId(t *testing.T) {
 
 	_, err := deleteList(lists, "missing-id")
 
-	if !errors.Is(err, ChoiceListMissing) {
-		t.Errorf("Expected to get a ChoiceListMissing error, but did not")
+	if !errors.Is(err, OptionListMissing) {
+		t.Errorf("Expected to get a OptionListMissing error, but did not")
 	}
 }
 
