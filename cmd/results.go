@@ -23,37 +23,36 @@ var resultsCmd = &cobra.Command{
 
 		defaultStyles := table.DefaultStyles()
 
-		styles := table.Styles {
-			Cell: defaultStyles.Cell,
+		styles := table.Styles{
+			Cell:   defaultStyles.Cell,
 			Header: defaultStyles.Header,
 			// Selected: defaultStyles.Cell,
 		}
 
 		table := ltable.New().Headers("Rank", "Option", "Score").
-		Row("1", "Good Book", "10.4930430").
-		Row("2", "Something else", "5.4930430").
-		Row("3", "take a nap", "3.4930430").
-		Row("4", "think about savingss", "2.4930430").
-		Row("5", "cook a meal", "1.4930430").
-		StyleFunc(func(row, _ int) lipgloss.Style {
-			if row == 0 {
-				return styles.Header
-			}
-			return styles.Cell
-		})
+			Row("1", "Good Book", "10.4930430").
+			Row("2", "Something else", "5.4930430").
+			Row("3", "take a nap", "3.4930430").
+			Row("4", "think about savingss", "2.4930430").
+			Row("5", "cook a meal", "1.4930430").
+			StyleFunc(func(row, _ int) lipgloss.Style {
+				if row == 0 {
+					return styles.Header
+				}
+				return styles.Cell
+			})
 		// StyleFunc(func(row, col int) lipgloss.Style {
-			// switch {
-			// case row == 0:
-				// return Hea
+		// switch {
+		// case row == 0:
+		// return Hea
 		// })
 
 		// t := table.New(
-			// table.WithColumns(columns),
-			// table.WithRows(rows),
-			// table.WithFocused(true),
-			// table.WithHeight(10),
+		// table.WithColumns(columns),
+		// table.WithRows(rows),
+		// table.WithFocused(true),
+		// table.WithHeight(10),
 		// )
-
 
 		fmt.Println(table.Render())
 	},

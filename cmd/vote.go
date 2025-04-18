@@ -1,6 +1,5 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -23,13 +22,13 @@ var voteCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("vote called")
 		huh.NewSelect[string]().
-		  Title("Which is more important?").
+			Title("Which is more important?").
 			Options(
 				huh.NewOption("Cool Choice 1", "cool-choice"),
 				huh.NewOption("Cool Choice 2", "cool-choice-2"),
 			).
 			Value(&choice).Run()
-			fmt.Println("vote result: ", choice)
+		fmt.Println("vote result: ", choice)
 	},
 }
 

@@ -12,7 +12,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-
 func formatTable(lists []OptionList) string {
 	var rows [][]string
 
@@ -20,7 +19,7 @@ func formatTable(lists []OptionList) string {
 		created := time.Unix(int64(list.CreatedAt), 0)
 		timestamp := fmt.Sprintf("%d/%d/%d", created.Year(), created.Month(), created.Day())
 		var warning string
-    if !list.DbExists {
+		if !list.DbExists {
 			warning = "DB is missing"
 		}
 		rows = append(rows, []string{list.Name, strconv.FormatBool(list.Active), timestamp, warning})
@@ -34,7 +33,7 @@ func formatTable(lists []OptionList) string {
 }
 
 func emptyStateMessage() string {
-  return "no lists have been created, use `ranker list init` to get started`"
+	return "no lists have been created, use `ranker list init` to get started`"
 }
 
 var listCmd = &cobra.Command{
@@ -46,7 +45,7 @@ var listCmd = &cobra.Command{
 		listData := loadLists()
 
 		if len(listData.Lists) == 0 {
-		  fmt.Println(emptyStateMessage())
+			fmt.Println(emptyStateMessage())
 		} else {
 			// gotta figure out how to test this method
 			// lists := markListEntryAsActiveMap(listData, listData.ActiveList)

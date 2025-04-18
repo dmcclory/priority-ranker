@@ -1,6 +1,5 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -12,8 +11,8 @@ import (
 
 // optionCmd represents the option command
 var optionCmd = &cobra.Command{
-	Use:   "option",
-	Short: "A brief description of your command",
+	Use:     "option",
+	Short:   "A brief description of your command",
 	Aliases: []string{"options"},
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -23,9 +22,9 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("option called")
-	 	// db := initDb(dbPath("sqlite-testing"))
-	  // db.Create(&Option{Label: "Test Option"})
-    db, err := loadDb(dbPath("sqlite-testing"))
+		// db := initDb(dbPath("sqlite-testing"))
+		// db.Create(&Option{Label: "Test Option"})
+		db, err := loadDb(dbPath("sqlite-testing"))
 		check(err)
 		options := loadOptions(db)
 		for _, option := range options {

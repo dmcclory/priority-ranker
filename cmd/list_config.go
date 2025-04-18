@@ -2,20 +2,20 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"os"
 	"path"
 	"regexp"
 	"strings"
 	"time"
-	"fmt"
-	"errors"
 )
 
 type OptionList struct {
-	Name string
-	Id string
-	Active bool
-	DbExists bool
+	Name      string
+	Id        string
+	Active    bool
+	DbExists  bool
 	CreatedAt int64
 }
 
@@ -42,18 +42,18 @@ func configPath() string {
 
 func dbPath(listId string) string {
 	dir := rankerDir()
-	return path.Join(dir, listId + ".sqlite")
+	return path.Join(dir, listId+".sqlite")
 }
 
 type ListConfig struct {
-	ActiveList string `json:"active"`
-	Lists map[string]OptionList `json:"lists"`
+	ActiveList string                `json:"active"`
+	Lists      map[string]OptionList `json:"lists"`
 }
 
 func check(e error) {
-  if e != nil {
-    panic(e)
-  }
+	if e != nil {
+		panic(e)
+	}
 }
 
 func updateActiveList(listId string, lists ListConfig) {
@@ -134,7 +134,7 @@ func loadLists() ListConfig {
 }
 
 func addNewOptionList(lists ListConfig, listName string) (ListConfig, error) {
-  listId := generateId(listName)
+	listId := generateId(listName)
 	createdAt := time.Now().Unix()
 
 	_, present := lists.Lists[listId]
@@ -143,7 +143,7 @@ func addNewOptionList(lists ListConfig, listName string) (ListConfig, error) {
 		return ListConfig{}, OptionListExists
 	}
 
-	newOptionList :=  OptionList{Name: listName, Id: listId, CreatedAt: createdAt}
+	newOptionList := OptionList{Name: listName, Id: listId, CreatedAt: createdAt}
 	lists.Lists[listId] = newOptionList
 	lists.ActiveList = listId
 

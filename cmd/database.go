@@ -1,12 +1,12 @@
 package cmd
 
 import (
-  "github.com/glebarez/sqlite"
+	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
 
 type Option struct {
-	ID uint
+	ID    uint
 	Label string
 }
 

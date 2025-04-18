@@ -15,7 +15,7 @@ import (
 var listSwitchCmd = &cobra.Command{
 	Use:   "switch",
 	Short: "Switch to another list",
-	Long: `Sets the current active list to the one provided.`,
+	Long:  `Sets the current active list to the one provided.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		lists := loadLists()
 
@@ -26,10 +26,10 @@ var listSwitchCmd = &cobra.Command{
 			options = append(options, huh.NewOption(list.Name, list.Id))
 		}
 		f := huh.NewSelect[string]().Title("Switch list:").Options(
-			options...
+			options...,
 		).Value(&newId)
 
-    if err := f.Run(); err != nil {
+		if err := f.Run(); err != nil {
 			fmt.Fprintf(os.Stderr, "Oof: %v\n", err)
 		} else {
 			fmt.Println("updating the active list to: ", newId)

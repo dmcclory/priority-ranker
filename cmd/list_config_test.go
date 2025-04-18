@@ -6,13 +6,13 @@ import (
 	"testing"
 )
 
-func getListsAsMap() ListConfig{
+func getListsAsMap() ListConfig {
 	return ListConfig{
 		ActiveList: "first-list",
 		Lists: map[string]OptionList{
-			"first-list": {Id: "first-list", Name: "First List"},
+			"first-list":  {Id: "first-list", Name: "First List"},
 			"second-list": {Id: "second-list", Name: "Second List"},
-			"third-list": {Id: "third-list", Name: "Third List"},
+			"third-list":  {Id: "third-list", Name: "Third List"},
 		},
 	}
 }
@@ -84,7 +84,7 @@ func TestLoadListsWhenConfigDoesNotExistYet(t *testing.T) {
 	tempdir, err := os.MkdirTemp("", "test")
 	check(err)
 	t.Setenv("RANKER_DIR", tempdir)
-	
+
 	lists := loadLists()
 
 	if lists.ActiveList != "" {

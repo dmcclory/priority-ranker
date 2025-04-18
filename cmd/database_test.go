@@ -45,7 +45,7 @@ func TestInitDbCreatesAnOptionsTableInNewDb(t *testing.T) {
 
 	for _, name := range tableNames {
 		if name == "options" {
-			included = true 
+			included = true
 		}
 	}
 
