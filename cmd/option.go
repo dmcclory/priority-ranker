@@ -21,10 +21,10 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("option called")
 		// db := initDb(dbPath("sqlite-testing"))
 		// db.Create(&Option{Label: "Test Option"})
-		db, err := loadDb(dbPath("sqlite-testing"))
+		listData := loadLists()
+		db, err := loadDb(dbPath(listData.ActiveList))
 		check(err)
 		options := loadOptions(db)
 		for _, option := range options {
