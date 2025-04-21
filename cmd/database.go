@@ -35,3 +35,9 @@ func loadOptions(db *gorm.DB) []Option {
 	db.Find(&options)
 	return options
 }
+
+func addOption(db *gorm.DB, newOption string) (Option, error) {
+	var option Option
+	db.FirstOrCreate(&option, Option{Label: newOption})
+	return option, nil
+}

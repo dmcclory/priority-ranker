@@ -53,3 +53,53 @@ func TestInitDbCreatesAnOptionsTableInNewDb(t *testing.T) {
 		t.Errorf("expected initDb to create an options table, but it did not")
 	}
 }
+
+func TestAddNewOptionToDbAddsStringAsANewOption(t *testing.T) {
+	tempdir, err := os.MkdirTemp("", "test")
+	check(err)
+	t.Setenv("RANKER_DIR", tempdir)
+
+	if fileExists(dbPath("test-db")) {
+		t.Errorf("test setup failed -found database that should not exist")
+	}
+
+	db, err := initDb(dbPath("test-db"))
+
+	addOption(db, "cool test")
+
+	var result Option
+	db.Where("label = ?", "cool test").First(&result)
+
+	if result.ID == 0 {
+		t.Errorf("no record found in DB, but one was expected")
+	}
+}
+
+func TestAddNewOptionToDbDoesNotDuplicateRowsIfEntryAlreadyExists(t *testing.T) {
+	tempdir, err := os.MkdirTemp("", "test")
+	check(err)
+	t.Setenv("RANKER_DIR", tempdir)
+
+	if fileExists(dbPath("test-db")) {
+		t.Errorf("test setup failed -found database that should not exist")
+	}
+
+	db, err := initDb(dbPath("test-db"))
+
+	addOption(db, "cool test")
+	addOption(db, "cool test")
+
+	var result Option
+	db.Where("label = ?", "cool test").First(&result)
+
+	if result.ID != 1 {
+		t.Errorf("no record found in DB, but one was expected")
+	}
+
+	var count int64
+	db.Table("options").Count(&count)
+
+	if count != 1 {
+		t.Error("expected only one row to exist")
+	}
+}
