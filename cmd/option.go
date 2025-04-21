@@ -40,7 +40,12 @@ to quickly create a Cobra application.`,
 		db, err := loadDb(dbPath(listData.ActiveList))
 		check(err)
 		options := loadOptions(db)
-		fmt.Println("\n" + formatOptionTable(options))
+
+		if len(options) == 0 {
+			fmt.Println("\n" + "There are not options in the list, use `ranker option add` to add some")
+		} else {
+			fmt.Println("\n" + formatOptionTable(options))
+		}
 	},
 }
 
