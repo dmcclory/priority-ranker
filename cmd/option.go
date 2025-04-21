@@ -5,9 +5,22 @@ package cmd
 
 import (
 	"fmt"
+	"strconv"
 
+	ltable "github.com/charmbracelet/lipgloss/table"
 	"github.com/spf13/cobra"
 )
+
+func formatOptionTable(options []Option) string {
+	var rows [][]string
+
+	for _, option := range options {
+		rows = append(rows, []string{strconv.FormatUint(uint64(option.ID), 10), option.Label})
+	}
+
+	table := ltable.New().Rows(rows...).Headers("Id", "Option")
+	return table.Render()
+}
 
 // optionCmd represents the option command
 var optionCmd = &cobra.Command{
@@ -27,9 +40,7 @@ to quickly create a Cobra application.`,
 		db, err := loadDb(dbPath(listData.ActiveList))
 		check(err)
 		options := loadOptions(db)
-		for _, option := range options {
-			fmt.Println("option: ", option.Label)
-		}
+		fmt.Println("\n" + formatOptionTable(options))
 	},
 }
 
