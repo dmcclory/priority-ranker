@@ -25,8 +25,8 @@ func formatOptionTable(options []Option) string {
 // optionCmd represents the option command
 var optionCmd = &cobra.Command{
 	Use:     "option",
-	Short:   "A brief description of your command",
 	Aliases: []string{"options"},
+	Short:   "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 

@@ -103,3 +103,33 @@ func TestAddNewOptionToDbDoesNotDuplicateRowsIfEntryAlreadyExists(t *testing.T) 
 		t.Error("expected only one row to exist")
 	}
 }
+
+func TestRemoveOptionFromDbDeletesARow(t *testing.T) {
+	tempdir, err := os.MkdirTemp("", "test")
+	check(err)
+	t.Setenv("RANKER_DIR", tempdir)
+
+	if fileExists(dbPath("test-db")) {
+		t.Errorf("test setup failed -found database that should not exist")
+	}
+
+	db, err := initDb(dbPath("test-db"))
+
+	addOption(db, "cool test")
+
+	var count int64
+
+	db.Table("options").Count(&count)
+	if count != 1 {
+		t.Error("expected the table to have one row")
+	}
+
+	removeOption(db, 1)
+
+
+	db.Table("options").Count(&count)
+	if count != 0 {
+		t.Error("expected the table to be empty")
+	}
+
+}

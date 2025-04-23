@@ -26,7 +26,7 @@ var optionAddCmd = &cobra.Command{
 		// how do we handle errors for insert and query?
 		addOption(db, option)
 
-		fmt.Printf("update %s, added '%s' to the list of options\n", listData.ActiveList, option)
+		fmt.Printf("added '%s' to the active list of options\n", option)
 	},
 }
 

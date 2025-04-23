@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type Option struct {
@@ -11,7 +12,9 @@ type Option struct {
 }
 
 func loadDb(path string) (*gorm.DB, error) {
-	db, err := gorm.Open(sqlite.Open(path), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(path), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		return &gorm.DB{}, err
 	}
@@ -36,8 +39,31 @@ func loadOptions(db *gorm.DB) []Option {
 	return options
 }
 
+func getOption(db *gorm.DB, optionId uint64) (Option, error) {
+	var option Option
+
+	err := db.First(&option, optionId).Error
+
+	if err != nil {
+		return Option{}, err
+	}
+
+	return option, nil
+}
+
 func addOption(db *gorm.DB, newOption string) (Option, error) {
 	var option Option
-	db.FirstOrCreate(&option, Option{Label: newOption})
+	err := db.FirstOrCreate(&option, Option{Label: newOption}).Error
+	if err != nil {
+		return Option{}, err
+	}
 	return option, nil
+}
+
+func removeOption(db *gorm.DB, optionId uint64) error {
+	// https://gorm.io/docs/error_handling.html
+	// "After a chain of methods, it’s crucial to check the Error field"
+	err := db.Delete(&Option{}, optionId).Error
+
+	return err
 }
