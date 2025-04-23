@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func formatTable(lists []OptionList) string {
+func formatListTable(lists []OptionList) string {
 	var rows [][]string
 
 	for _, list := range lists {
@@ -54,7 +54,7 @@ var listCmd = &cobra.Command{
 			for _, v := range listData.Lists {
 				lists = append(lists, v)
 			}
-			fmt.Println(formatTable(lists))
+			fmt.Println(formatListTable(lists))
 		}
 	},
 }
