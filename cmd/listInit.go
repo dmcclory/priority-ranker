@@ -6,6 +6,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +21,7 @@ var listInitCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("listInit called")
 		lists := loadLists()
-		listName := args[0]
+		listName := strings.Join(args, " ")
 		lists, err := addNewOptionList(lists, listName)
 		if errors.Is(err, OptionListExists) {
 			fmt.Printf("A file already exists named %s, remove it or pick a new name\n", listName)
