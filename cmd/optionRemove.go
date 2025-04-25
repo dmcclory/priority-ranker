@@ -12,6 +12,8 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
+var forceOptionDelete bool
+
 // optionRemoveCmd represents the optionRemove command
 var optionRemoveCmd = &cobra.Command{
 	Use:   "remove",
@@ -39,11 +41,15 @@ You can see the option ids by running 'ranker options'.`,
 		}
 
 		var confirm bool
-		huh.NewConfirm().
-		  Title("This is irreversible and will delete your votes as well as the option. Are you sure?").
-			Affirmative("Yup!").
-			Negative("No ty").
-			Value(&confirm).Run()
+		if forceOptionDelete {
+			confirm = true
+		} else {
+			huh.NewConfirm().
+				Title("This is irreversible and will delete your votes as well as the option. Are you sure?").
+				Affirmative("Yup!").
+				Negative("No ty").
+				Value(&confirm).Run()
+		}
 
 		if confirm {
 			err = removeOption(db, optionId)
@@ -61,6 +67,7 @@ You can see the option ids by running 'ranker options'.`,
 
 func init() {
 	optionCmd.AddCommand(optionRemoveCmd)
+	optionRemoveCmd.Flags().BoolVarP(&forceOptionDelete, "force", "f", false, "force delete")
 
 	// Here you will define your flags and configuration settings.
 
