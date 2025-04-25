@@ -9,6 +9,7 @@ import (
 	"errors"
 	"gorm.io/gorm"
 	"github.com/spf13/cobra"
+	"github.com/charmbracelet/huh"
 )
 
 // optionRemoveCmd represents the optionRemove command
@@ -37,12 +38,23 @@ You can see the option ids by running 'ranker options'.`,
 			check(err)
 		}
 
-		err = removeOption(db, optionId)
+		var confirm bool
+		huh.NewConfirm().
+		  Title("This is irreversible and will delete your votes as well as the option. Are you sure?").
+			Affirmative("Yup!").
+			Negative("No ty").
+			Value(&confirm).Run()
 
-		if err != nil {
-			fmt.Printf("\nError while trying to delete %d: %v\n", optionId, err)
+		if confirm {
+			err = removeOption(db, optionId)
+
+			if err != nil {
+				fmt.Printf("\nError while trying to delete %d: %v\n", optionId, err)
+			} else {
+				fmt.Printf("\nSuccessfully deleted option '%s', with id: %d\n", option.Label, optionId)
+			}
 		} else {
-			fmt.Printf("\nSuccessfully deleted option '%s', with id: %d\n", option.Label, optionId)
+			fmt.Println("no worries, exiting!")
 		}
 	},
 }
