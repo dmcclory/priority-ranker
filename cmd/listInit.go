@@ -16,6 +16,36 @@ import (
 var optionsInput bool
 var optionsFile string
 
+func getListInitOptions(huhInput string, fileInput string) []string {
+	var optionLabels []string
+  optionLabels = strings.Split(huhInput, "\n")
+	optionLabels = append(optionLabels, strings.Split(fileInput, "\n")...)
+
+	noBlanks := []string{}
+	for _, line := range optionLabels {
+		if line != "" {
+			noBlanks = append(noBlanks, line)
+		}
+	}
+
+	optionsMap := map[string]bool{}
+
+	for _, option := range noBlanks {
+		if !optionsMap[option] {
+			optionsMap[option] = true
+		}
+	}
+
+	keys := make([]string, len(optionsMap))
+	i := 0
+	for k := range optionsMap {
+		keys[i] = k
+		i++
+	}
+
+	return keys
+}
+
 // listInitCmd represents the listInit command
 var listInitCmd = &cobra.Command{
 	Use:   "init",
@@ -45,44 +75,35 @@ var listInitCmd = &cobra.Command{
 		fmt.Println("new list created & set to active")
 
 		optionLabels := []string{}
+		var textInput string
+		var fileInput string
 
 		if optionsInput {
-			var textInput string
 			huh.NewText().
 			  Title(fmt.Sprintf("Enter options, each line will become part of the '%s' list\n(Ctrl+J to add a new line)", listName)).
 				Lines(10).
 				ShowLineNumbers(true).
 				Value(&textInput).
 				Run()
-				optionLabels = strings.Split(textInput, "\n")
 		}
 		if optionsFile != "" {
 			data, err := os.ReadFile(optionsFile)
 			if err != nil {
-				fmt.Printf("not able to read %s, the options have not been added to the db", optionsFile)
+				fmt.Printf("not able to read %s, the options will not be added to the db", optionsFile)
 			} else {
-				lines := strings.Split(string(data), "\n")
-
-				if len(lines) > 0 {
-					optionLabels = append(optionLabels, lines...)
-				}
+				fileInput = string(data)
 			}
 		}
 
-		// handle duplicate entries as well
-		noBlanks := []string{}
-		for _, line := range optionLabels {
-			if line != "" {
-				noBlanks = append(noBlanks, line)
-			}
-		}
+		optionLabels = getListInitOptions(textInput, fileInput)
 
-		if len(noBlanks) > 0 {
-			_, err = addOptions(db, noBlanks)
-				fmt.Println("not able to add options to the database", err)
+		if len(optionLabels) > 0 {
+			_, err = addOptions(db, optionLabels)
 			if err != nil {
+				fmt.Println("not able to add options to the database", err)
+			} else {
+				fmt.Printf("added %d options to the list\n", len(optionLabels))
 			}
-			fmt.Printf("added %d options to the list\n", len(noBlanks))
 		}
 
 	},
