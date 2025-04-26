@@ -26,8 +26,12 @@ var listDeleteCmd = &cobra.Command{
 
 		lists, err := deleteList(lists, listId)
 		check(err)
-		persistListConfig(lists)
-		fmt.Printf("successfully deleted %s", listId)
+		if err != nil {
+			fmt.Printf("error while deleting list: %s\n", listId )
+		} else {
+		  persistListConfig(lists)
+			fmt.Printf("successfully deleted %s", listId)
+		}
 	},
 }
 

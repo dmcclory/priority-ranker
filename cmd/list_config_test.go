@@ -157,6 +157,13 @@ func TestDeleteListRemovesEntryAndFile(t *testing.T) {
 
 	lists, err = deleteList(lists, "first-list")
 
+	_, secondListPresent := lists.Lists["second-list"]
+
+	if !secondListPresent {
+		t.Errorf("Expected the unaffected lists to remain in the set of lists in the config, but it was not")
+	}
+
+
 	if err != nil {
 		t.Errorf("Expected err to be nil, but got %s", err)
 	}
@@ -165,10 +172,10 @@ func TestDeleteListRemovesEntryAndFile(t *testing.T) {
 		t.Errorf("Expected the list's database file to be deleted, but it was not")
 	}
 
-	_, listPresent := lists.Lists["first-list"]
+	_, firstListPresent := lists.Lists["first-list"]
 
-	if listPresent {
-		t.Errorf("Expected the list's to be removed from the set of lists in the config, but it was not")
+	if firstListPresent {
+		t.Errorf("Expected the list to be removed from the set of lists in the config, but it was not")
 	}
 
 	if lists.ActiveList != "" {

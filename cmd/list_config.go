@@ -176,8 +176,8 @@ func deleteList(lists ListConfig, listId string) (ListConfig, error) {
 	}
 
 	err := os.Remove(dbPath(listId))
-	if !errors.Is(err, os.ErrNotExist) {
-		return ListConfig{}, err
+	if errors.Is(err, os.ErrNotExist) {
+		fmt.Println("not able to delete db for: ", listId)
 	}
 
 	if lists.ActiveList == listId {
