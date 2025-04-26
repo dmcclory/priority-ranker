@@ -60,6 +60,21 @@ func addOption(db *gorm.DB, newOption string) (Option, error) {
 	return option, nil
 }
 
+func addOptions(db *gorm.DB, newOptions []string) ([]Option, error) {
+	var optionInputs []Option
+
+	for _, newOption := range newOptions {
+		optionInputs = append(optionInputs, Option{Label: newOption})
+	}
+
+	err := db.Create(&optionInputs).Error
+	if err != nil {
+	  return[]Option{}, err
+	}
+
+	return optionInputs, nil
+}
+
 func removeOption(db *gorm.DB, optionId uint64) error {
 	// https://gorm.io/docs/error_handling.html
 	// "After a chain of methods, it’s crucial to check the Error field"

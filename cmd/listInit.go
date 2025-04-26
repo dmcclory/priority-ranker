@@ -6,9 +6,15 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strings"
+
+	"github.com/charmbracelet/huh"
 	"github.com/spf13/cobra"
 )
+
+var optionsInput bool
+var optionsFile string
 
 // listInitCmd represents the listInit command
 var listInitCmd = &cobra.Command{
@@ -31,10 +37,52 @@ var listInitCmd = &cobra.Command{
 		newListId := lists.ActiveList
 		if fileExists(dbPath(newListId)) {
 			fmt.Printf("A file already exists at %s, remove it or pick a new name\n", dbPath(newListId))
-		} else {
-			initDb(dbPath(newListId))
-			persistListConfig(lists)
-			fmt.Println("new list created & set to active")
+			return
+		}
+
+		db, err := initDb(dbPath(newListId))
+		persistListConfig(lists)
+		fmt.Println("new list created & set to active")
+
+		optionLabels := []string{}
+
+		if optionsInput {
+			var textInput string
+			huh.NewText().
+			  Title(fmt.Sprintf("Enter options, each line will become part of the '%s' list\n(Ctrl+J to add a new line)", listName)).
+				Lines(10).
+				ShowLineNumbers(true).
+				Value(&textInput).
+				Run()
+				optionLabels = strings.Split(textInput, "\n")
+		}
+		if optionsFile != "" {
+			data, err := os.ReadFile(optionsFile)
+			if err != nil {
+				fmt.Printf("not able to read %s, the options have not been added to the db", optionsFile)
+			} else {
+				lines := strings.Split(string(data), "\n")
+
+				if len(lines) > 0 {
+					optionLabels = append(optionLabels, lines...)
+				}
+			}
+		}
+
+		// handle duplicate entries as well
+		noBlanks := []string{}
+		for _, line := range optionLabels {
+			if line != "" {
+				noBlanks = append(noBlanks, line)
+			}
+		}
+
+		if len(noBlanks) > 0 {
+			_, err = addOptions(db, noBlanks)
+				fmt.Println("not able to add options to the database", err)
+			if err != nil {
+			}
+			fmt.Printf("added %d options to the list\n", len(noBlanks))
 		}
 
 	},
@@ -42,14 +90,6 @@ var listInitCmd = &cobra.Command{
 
 func init() {
 	listCmd.AddCommand(listInitCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listInitCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listInitCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	listInitCmd.Flags().BoolVarP(&optionsInput, "options", "o", false, "add options with a text input")
+	listInitCmd.Flags().StringVarP(&optionsFile, "options-file", "f", "", "read options from a file")
 }
