@@ -10,3 +10,15 @@ func calcNumerator(wins WinRecord, pScores PScores, i int64, j int64) float64 {
 func calcDenominator(wins WinRecord, pScores PScores, i int64, j int64) float64 {
 	return (float64(wins[j][i])) / (pScores[i] + pScores[j])
 }
+
+func calcPScore(wins WinRecord, pScores PScores, i int64) float64 {
+	var numeratorTotal float64
+	var denominatorTotal float64
+
+	for j, _ := range wins {
+		numeratorTotal += calcNumerator(wins, pScores, i, j)
+		denominatorTotal += calcDenominator(wins, pScores, i, j)
+	}
+	
+	return numeratorTotal / denominatorTotal
+}
