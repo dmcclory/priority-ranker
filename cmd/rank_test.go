@@ -29,73 +29,116 @@ func buildInitialPScores() PScores {
 	}
 }
 
-func TestCalculateNumerator(t *testing.T) {
+// I was going to make a type that would hold the pairs i & j
+// and put that on an "input" prop, but realized it would be easier to just
+// do i & j as separate fields on the test case itself
+// type IndexPair = [2]int64
+
+func TestCalculateNumeratorTable(t *testing.T) {
+	// based on: https://go.dev/wiki/TableDrivenTests#using-a-map-to-store-test-cases
+	tests := map[string]struct {
+		i int64
+		j int64
+		result float64
+	} {
+		"numerator with 1, 2": {
+			i: 1, j: 2, result: 1,
+		},
+		"numerator with 1, 3": {
+			i: 1, j: 3, result: 0,
+		},
+		"numerator with 1, 4": {
+			i: 1, j: 4, result: 0.5,
+		},
+	}
+
 	wins := buildExample()
 	pScores := buildInitialPScores()
 
-	cell1 := calcNumerator(wins, pScores, 1, 2)
-
-	if cell1 != 1 {
-		t.Errorf("was expecting something different man!")
-	}
-
-	cell2 := calcNumerator(wins, pScores, 1, 3)
-
-	if cell2 != 0 {
-		t.Errorf("was expecting something different man!")
-	}
-
-	cell3 := calcNumerator(wins, pScores, 1, 4)
-
-	if cell3 != 0.5 {
-		t.Errorf("was expecting something different man!")
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			if got, expected := calcNumerator(wins, pScores, test.i, test.j), test.result; got != expected {
+				t.Fatalf("calcNumerator with %d and %d returned %f, expected %f", test.i, test.j, got, expected)
+			}
+		})
 	}
 }
 
-func TestCalculateDenominator(t *testing.T) {
+func TestCalculateDenominatorTable(t *testing.T) {
+	tests := map[string]struct {
+		i int64
+		j int64
+		result float64
+	} {
+		"denominator with 1, 2": {
+			i: 1, j: 2, result: 1.5,
+		},
+		"denominator with 1, 3": {
+			i: 1, j: 3, result: 0,
+		},
+		"denominator with 1, 4": {
+			i: 1, j: 4, result: 2,
+		},
+	}
+
 	wins := buildExample()
 	pScores := buildInitialPScores()
 
-	cell1 := calcDenominator(wins, pScores, 1, 2)
-
-	if cell1 != 1.5 {
-		t.Errorf("was expecting something different man!")
-	}
-
-	cell2 := calcDenominator(wins, pScores, 1, 3)
-
-	if cell2 != 0 {
-		t.Errorf("was expecting something different man!")
-	}
-
-	cell3 := calcDenominator(wins, pScores, 1, 4)
-
-	if cell3 != 2 {
-		t.Errorf("was expecting something different man!")
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			if got, expected := calcDenominator(wins, pScores, test.i, test.j), test.result; got != expected {
+				t.Fatalf("calcDenominator with %d and %d returned %f, expected %f", test.i, test.j, got, expected)
+			}
+		})
 	}
 }
 
-func TestCalculatePScore(t *testing.T) {
+func TestCalculateIndividualPScore(t *testing.T) {
+	tests := map[string]struct {
+		i int64
+		pScores PScores
+		result float64
+	} {
+		"pScore for cell 1": {
+			i: 1, pScores: PScores{1: 1, 2: 1, 3: 1, 4: 1}, result: 0.428571,
+		},
+		"pScore for cell 2": {
+			i: 2, pScores: PScores{1: 0.428571, 2: 1, 3: 1, 4: 1}, result: 1.172413,
+		},
+	}
+
 	wins := buildExample()
-	pScores := buildInitialPScores()
 
-	cell1 := calcPScore(wins, pScores, 1)
-
-	if !nearlyEqual(cell1, 0.428571) {
-		t.Errorf("was expecting something different man!, got: %f", cell1)
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			if got, expected := calcPScore(wins, test.pScores, test.i), test.result; !nearlyEqual(got, expected) {
+				t.Fatalf("calcPScore with %d failed, expected %f, got %f", test.i, test.result, got)
+			}
+		})
 	}
 }
 
-func TestCalculatePScoreWithSomeOtherEntries(t *testing.T) {
+func TestCalculateNewPScoresTable(t *testing.T) {
+	tests := map[string]struct {
+		i int64
+		result float64
+	} {
+		"new pScore for cell 1": { i: 1, result: 0.428571, },
+		"new pScore for cell 2": { i: 2, result: 1.172413, },
+		"new pScore for cell 3": { i: 3, result: 0.557411, },
+		"new pScore for cell 4": { i: 4, result: 1.694167, },
+	}
+
 	wins := buildExample()
 	pScores := buildInitialPScores()
 
-	pScores[1] = 0.428571
-
-	cell2 := calcPScore(wins, pScores, 2)
-
-	if !nearlyEqual(cell2, 1.172413) {
-		t.Errorf("was expecting something different man!, got: %f", cell2)
+	t.Parallel()
+	for name, test:= range tests {
+		t.Run(name, func(t *testing.T) {
+			if got, expected := calcNewPScores(wins, pScores), test.result; !nearlyEqual(got[test.i], expected) {
+				t.Fatalf("calcNewPScores with %d failed, expected %f, got %f", test.i, test.result, got[test.i])
+			}
+		})
 	}
 }
 
