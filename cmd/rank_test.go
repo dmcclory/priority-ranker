@@ -57,6 +57,7 @@ func TestCalculateNumeratorTable(t *testing.T) {
 	pScores := buildInitialPScores()
 
 	for name, test := range tests {
+		test := test
 		t.Run(name, func(t *testing.T) {
 			if got, expected := calcNumerator(wins, pScores, test.i, test.j), test.result; got != expected {
 				t.Fatalf("calcNumerator with %d and %d returned %f, expected %f", test.i, test.j, got, expected)
@@ -86,6 +87,7 @@ func TestCalculateDenominatorTable(t *testing.T) {
 	pScores := buildInitialPScores()
 
 	for name, test := range tests {
+		test := test
 		t.Run(name, func(t *testing.T) {
 			if got, expected := calcDenominator(wins, pScores, test.i, test.j), test.result; got != expected {
 				t.Fatalf("calcDenominator with %d and %d returned %f, expected %f", test.i, test.j, got, expected)
@@ -111,6 +113,7 @@ func TestCalculateIndividualPScore(t *testing.T) {
 	wins := buildExample()
 
 	for name, test := range tests {
+		test := test
 		t.Run(name, func(t *testing.T) {
 			if got, expected := calcPScore(wins, test.pScores, test.i), test.result; !nearlyEqual(got, expected) {
 				t.Fatalf("calcPScore with %d failed, expected %f, got %f", test.i, test.result, got)
@@ -135,6 +138,7 @@ func TestCalculateNewPScoresTable(t *testing.T) {
 
 	t.Parallel()
 	for name, test:= range tests {
+		test := test
 		t.Run(name, func(t *testing.T) {
 			if got, expected := calcNewPScores(wins, pScores), test.result; !nearlyEqual(got[test.i], expected) {
 				t.Fatalf("calcNewPScores with %d failed, expected %f, got %f", test.i, test.result, got[test.i])
@@ -224,6 +228,7 @@ func TestBuildRecordFromVotes(t *testing.T) {
 	}
 
 	for name, test := range tests {
+		test := test
 		t.Run(name, func(t *testing.T) {
 			got, expected := buildWinRecordFromVotes(test.votes, test.optionIds), test.result;
 			comparison := deep.Equal(got, expected)
