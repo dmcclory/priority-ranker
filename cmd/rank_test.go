@@ -46,3 +46,26 @@ func TestCalculateNumerator(t *testing.T) {
 		t.Errorf("was expecting something different man!")
 	}
 }
+
+func TestCalculateDenominator(t *testing.T) {
+	wins := buildExample()
+	pScores := buildInitialPScores()
+
+	cell1 := calcDenominator(wins, pScores, 1, 2)
+
+	if cell1 != 1.5 {
+		t.Errorf("was expecting something different man!")
+	}
+
+	cell2 := calcDenominator(wins, pScores, 1, 3)
+
+	if cell2 != 0 {
+		t.Errorf("was expecting something different man!")
+	}
+
+	cell3 := calcDenominator(wins, pScores, 1, 4)
+
+	if cell3 != 2 {
+		t.Errorf("was expecting something different man!")
+	}
+}
