@@ -3,6 +3,7 @@ package cmd
 import (
   "testing"
 	"math"
+	"github.com/go-test/deep"
 )
 
 func nearlyEqual(a float64, b float64) bool {
@@ -162,5 +163,76 @@ func TestCalculateNewPScores(t *testing.T) {
 
 	if !nearlyEqual(newPScores[4], 1.694167) {
 		t.Errorf("Expected %f, got %f\n", 1.694167, newPScores[4])
+	}
+}
+
+func TestBuildRecordFromVotes(t *testing.T) {
+	tests := map[string]struct {
+		votes []Vote
+		optionIds []int64
+		result WinRecord
+	} {
+		"with_no_votes_every_id_is_present_set_to_zero": {
+			votes: []Vote{},
+			optionIds: []int64{1,2,3},
+			result: WinRecord{
+				1: {2: 0, 3: 0},
+				2: {1: 0, 3: 0},
+				3: {1: 0, 2: 0},
+			},
+		},
+		"with_one_beating_everything_else": {
+			votes: []Vote{
+				{WinnerId: 1, LoserId: 2},
+				{WinnerId: 1, LoserId: 3},
+			},
+			optionIds: []int64{1,2,3},
+			result: WinRecord{
+				1: {2: 1, 3: 1},
+				2: {1: 0, 3: 0},
+				3: {1: 0, 2: 0},
+			},
+		},
+		"replicate_the_example_from_build_example": {
+			optionIds: []int64{1,2,3,4},
+			result: buildExample(),
+			votes: []Vote {
+				{WinnerId: 1, LoserId: 2},
+				{WinnerId: 1, LoserId: 2},
+				{WinnerId: 1, LoserId: 4},
+				{WinnerId: 2, LoserId: 1},
+				{WinnerId: 2, LoserId: 1},
+				{WinnerId: 2, LoserId: 1},
+				{WinnerId: 2, LoserId: 3},
+				{WinnerId: 2, LoserId: 3},
+				{WinnerId: 2, LoserId: 3},
+				{WinnerId: 2, LoserId: 3},
+				{WinnerId: 2, LoserId: 3},
+				{WinnerId: 3, LoserId: 2},
+				{WinnerId: 3, LoserId: 2},
+				{WinnerId: 3, LoserId: 2},
+				{WinnerId: 3, LoserId: 4},
+				{WinnerId: 4, LoserId: 1},
+				{WinnerId: 4, LoserId: 1},
+				{WinnerId: 4, LoserId: 1},
+				{WinnerId: 4, LoserId: 1},
+				{WinnerId: 4, LoserId: 3},
+				{WinnerId: 4, LoserId: 3},
+				{WinnerId: 4, LoserId: 3},
+			},
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			got, expected := buildWinRecordFromVotes(test.votes, test.optionIds), test.result;
+			comparison := deep.Equal(got, expected)
+			if len(comparison) > 0 {
+				for _, e := range comparison {
+					t.Errorf("%v\n", e)
+				}
+				t.Fatalf("buildWinRecordFromVotes did not return expected results")
+			}
+		})
 	}
 }

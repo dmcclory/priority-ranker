@@ -11,6 +11,12 @@ type Option struct {
 	Label string
 }
 
+type Vote struct {
+	WinnerId int64
+	LoserId int64
+	CreatedAt int64
+}
+
 func loadDb(path string) (*gorm.DB, error) {
 	db, err := gorm.Open(sqlite.Open(path), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
