@@ -1,14 +1,13 @@
 module github.com/dmcclory/ranker
 
-go 1.23.0
-
-toolchain go1.23.8
+go 1.24.2
 
 require (
 	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/huh v0.7.0
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/glebarez/sqlite v1.11.0
+	github.com/go-test/deep v1.1.1
 	github.com/spf13/cobra v1.9.1
 	gorm.io/gorm v1.25.12
 )
@@ -26,7 +25,6 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
 	github.com/glebarez/go-sqlite v1.21.2 // indirect
-	github.com/go-test/deep v1.1.1 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
