@@ -1,5 +1,9 @@
 package cmd
 
+import (
+	"slices"
+)
+
 type WinRecord map[uint]map[uint]int64
 type PScores map[uint]float64
 
@@ -47,11 +51,15 @@ func calcNewPScores(wins WinRecord, pScores PScores) PScores {
 		newPScores[k] = score
 	}
 
-	// fmt.Println(newPScores)
-
-	for i, _ := range wins {
-		newPScores[i] = calcPScore(wins, newPScores, i)
+	sortedKeys := []uint{}
+	for k := range wins {
+		sortedKeys = append(sortedKeys, k)
 	}
-	
+	slices.Sort(sortedKeys)
+
+	for _, i := range sortedKeys {
+		newPScores[uint(i)] = calcPScore(wins, newPScores, uint(i))
+	}
+
 	return newPScores
 }
