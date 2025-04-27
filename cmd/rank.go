@@ -1,12 +1,12 @@
 package cmd
 
-type WinRecord map[int64]map[int64]int64
-type PScores map[int64]float64
+type WinRecord map[uint]map[uint]int64
+type PScores map[uint]float64
 
-func buildWinRecordFromVotes(votes []Vote, optionIds []int64) WinRecord {
+func buildWinRecordFromVotes(votes []Vote, optionIds []uint) WinRecord {
 	winRecord := make(WinRecord)
 	for _, i := range optionIds {
-		winRecord[i] = make(map[int64]int64)
+		winRecord[i] = make(map[uint]int64)
 		for _, j := range optionIds {
 			if i != j {
 				winRecord[i][j]= 0
@@ -20,15 +20,15 @@ func buildWinRecordFromVotes(votes []Vote, optionIds []int64) WinRecord {
 	return winRecord
 }
 
-func calcNumerator(wins WinRecord, pScores PScores, i int64, j int64) float64 {
+func calcNumerator(wins WinRecord, pScores PScores, i uint, j uint) float64 {
 	return (float64(wins[i][j]) * pScores[j]) / (pScores[i] + pScores[j])
 }
 
-func calcDenominator(wins WinRecord, pScores PScores, i int64, j int64) float64 {
+func calcDenominator(wins WinRecord, pScores PScores, i uint, j uint) float64 {
 	return (float64(wins[j][i])) / (pScores[i] + pScores[j])
 }
 
-func calcPScore(wins WinRecord, pScores PScores, i int64) float64 {
+func calcPScore(wins WinRecord, pScores PScores, i uint) float64 {
 	var numeratorTotal float64
 	var denominatorTotal float64
 

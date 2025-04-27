@@ -38,8 +38,8 @@ func buildInitialPScores() PScores {
 func TestCalculateNumeratorTable(t *testing.T) {
 	// based on: https://go.dev/wiki/TableDrivenTests#using-a-map-to-store-test-cases
 	tests := map[string]struct {
-		i int64
-		j int64
+		i uint
+		j uint
 		result float64
 	} {
 		"numerator with 1, 2": {
@@ -68,8 +68,8 @@ func TestCalculateNumeratorTable(t *testing.T) {
 
 func TestCalculateDenominatorTable(t *testing.T) {
 	tests := map[string]struct {
-		i int64
-		j int64
+		i uint
+		j uint
 		result float64
 	} {
 		"denominator with 1, 2": {
@@ -98,7 +98,7 @@ func TestCalculateDenominatorTable(t *testing.T) {
 
 func TestCalculateIndividualPScore(t *testing.T) {
 	tests := map[string]struct {
-		i int64
+		i uint
 		pScores PScores
 		result float64
 	} {
@@ -124,7 +124,7 @@ func TestCalculateIndividualPScore(t *testing.T) {
 
 func TestCalculateNewPScoresTable(t *testing.T) {
 	tests := map[string]struct {
-		i int64
+		i uint
 		result float64
 	} {
 		"new pScore for cell 1": { i: 1, result: 0.428571, },
@@ -173,12 +173,12 @@ func TestCalculateNewPScores(t *testing.T) {
 func TestBuildRecordFromVotes(t *testing.T) {
 	tests := map[string]struct {
 		votes []Vote
-		optionIds []int64
+		optionIds []uint
 		result WinRecord
 	} {
 		"with_no_votes_every_id_is_present_set_to_zero": {
 			votes: []Vote{},
-			optionIds: []int64{1,2,3},
+			optionIds: []uint{1,2,3},
 			result: WinRecord{
 				1: {2: 0, 3: 0},
 				2: {1: 0, 3: 0},
@@ -190,7 +190,7 @@ func TestBuildRecordFromVotes(t *testing.T) {
 				{WinnerId: 1, LoserId: 2},
 				{WinnerId: 1, LoserId: 3},
 			},
-			optionIds: []int64{1,2,3},
+			optionIds: []uint{1,2,3},
 			result: WinRecord{
 				1: {2: 1, 3: 1},
 				2: {1: 0, 3: 0},
@@ -198,7 +198,7 @@ func TestBuildRecordFromVotes(t *testing.T) {
 			},
 		},
 		"replicate_the_example_from_build_example": {
-			optionIds: []int64{1,2,3,4},
+			optionIds: []uint{1,2,3,4},
 			result: buildExample(),
 			votes: []Vote {
 				{WinnerId: 1, LoserId: 2},

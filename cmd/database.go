@@ -12,8 +12,8 @@ type Option struct {
 }
 
 type Vote struct {
-	WinnerId int64
-	LoserId int64
+	WinnerId uint
+	LoserId uint
 	CreatedAt int64
 }
 
