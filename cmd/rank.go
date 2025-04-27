@@ -22,3 +22,19 @@ func calcPScore(wins WinRecord, pScores PScores, i int64) float64 {
 	
 	return numeratorTotal / denominatorTotal
 }
+
+func calcNewPScores(wins WinRecord, pScores PScores) PScores {
+	newPScores := make(PScores)
+
+	for k, score := range pScores {
+		newPScores[k] = score
+	}
+
+	// fmt.Println(newPScores)
+
+	for i, _ := range wins {
+		newPScores[i] = calcPScore(wins, newPScores, i)
+	}
+	
+	return newPScores
+}

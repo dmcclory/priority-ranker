@@ -98,3 +98,26 @@ func TestCalculatePScoreWithSomeOtherEntries(t *testing.T) {
 		t.Errorf("was expecting something different man!, got: %f", cell2)
 	}
 }
+
+func TestCalculateNewPScores(t *testing.T) {
+	wins := buildExample()
+	pScores := buildInitialPScores()
+
+	newPScores := calcNewPScores(wins, pScores)
+
+	if !nearlyEqual(newPScores[1], 0.428571) {
+		t.Errorf("Expected %f, got %f\n", 0.428571, newPScores[1])
+	}
+
+	if !nearlyEqual(newPScores[2], 1.172414) {
+		t.Errorf("Expected %f, got %f\n", 1.172414, newPScores[2])
+	}
+
+	if !nearlyEqual(newPScores[3], 0.557411) {
+		t.Errorf("Expected %f, got %f\n", 0.557411, newPScores[3])
+	}
+
+	if !nearlyEqual(newPScores[4], 1.694167) {
+		t.Errorf("Expected %f, got %f\n", 1.694167, newPScores[4])
+	}
+}
