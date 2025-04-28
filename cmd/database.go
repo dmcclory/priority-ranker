@@ -47,7 +47,7 @@ func loadOptions(db *gorm.DB) ([]Option, error) {
 	return options, err
 }
 
-func getOption(db *gorm.DB, optionId uint64) (Option, error) {
+func getOption(db *gorm.DB, optionId uint) (Option, error) {
 	var option Option
 
 	err := db.First(&option, optionId).Error
@@ -83,7 +83,7 @@ func addOptions(db *gorm.DB, newOptions []string) ([]Option, error) {
 	return optionInputs, nil
 }
 
-func removeOption(db *gorm.DB, optionId uint64) error {
+func removeOption(db *gorm.DB, optionId uint) error {
 	// https://gorm.io/docs/error_handling.html
 	// "After a chain of methods, it’s crucial to check the Error field"
 	err := db.Delete(&Option{}, optionId).Error
@@ -107,8 +107,33 @@ func loadVotes(db *gorm.DB) ([]Vote, error) {
 	return votes, err
 }
 
-func deleteVotes(db *gorm.DB, voteId uint) (int64, error) {
-	result := db.Where("winner_id = ? or loser_id = ?", voteId, voteId).Delete(&Vote{})
+func deleteVotes(db *gorm.DB, optionId uint) (int64, error) {
+	result := db.Where("winner_id = ? or loser_id = ?", optionId, optionId).Delete(&Vote{})
 
 	return result.RowsAffected, result.Error
 }
+
+func deleteOptionAndVotes(db *gorm.DB, optionId uint) error {
+	// q := query.Use(db)
+
+	tx := db.Begin()
+
+	_, err := deleteVotes(tx, optionId)
+
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	err = removeOption(tx, optionId)
+
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
+
+	return nil
+}
+

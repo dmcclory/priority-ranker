@@ -26,7 +26,9 @@ You can see the option ids by running 'ranker options'.`,
 			fmt.Println("\nYou must provide an ID for an option to remove one. Look the output of `ranker options` to see the ids.")
 			return
 		}
-		optionId, err := strconv.ParseUint(args[0], 10, 32)
+		o, err := strconv.ParseUint(args[0], 10, 32)
+		optionId := uint(o)
+
 		listData := loadLists()
 		db, err := loadDb(dbPath(listData.ActiveList))
 		check(err)
@@ -52,7 +54,7 @@ You can see the option ids by running 'ranker options'.`,
 		}
 
 		if confirm {
-			err = removeOption(db, optionId)
+			err = deleteOptionAndVotes(db, optionId)
 
 			if err != nil {
 				fmt.Printf("\nError while trying to delete %d: %v\n", optionId, err)
