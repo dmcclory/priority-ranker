@@ -5,12 +5,65 @@ package cmd
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/charmbracelet/bubbles/table"
 	"github.com/charmbracelet/lipgloss"
 	ltable "github.com/charmbracelet/lipgloss/table"
 	"github.com/spf13/cobra"
 )
+
+type RankedResult struct {
+	Rank uint
+	Label string
+	Score float64
+}
+
+func getRankedResults() ([]RankedResult, error) {
+	listData := loadLists()
+	db, err := loadDb(dbPath(listData.ActiveList))
+	check(err)
+	options, err := loadOptions(db)
+	check(err)
+	votes, err := loadVotes(db)
+	check(err)
+
+	if err != nil {
+		return []RankedResult{}, err
+	}
+
+	optionIds := []uint{}
+	pScores := PScores{}
+
+	for _, option := range options {
+		optionIds = append(optionIds, option.ID)
+		pScores[option.ID] = 1
+	}
+
+  winRecord := buildWinRecordFromVotes(votes, optionIds)
+
+	ranks := calcNewPScores(winRecord, pScores)
+
+	sort.Slice(options, func(i, j int) bool {
+		if ranks[options[i].ID] > ranks[options[j].ID] {
+			return true
+		} else {
+			return false
+		}
+	})
+
+	rankedResults := []RankedResult{}
+
+	for i, option := range options {
+		rankedResults = append(rankedResults, RankedResult{
+	    Rank: uint(i),
+			Label: option.Label,
+			Score: ranks[option.ID],
+		})
+	}
+
+	return rankedResults, nil
+}
 
 var resultsCmd = &cobra.Command{
 	Use:   "results",
@@ -19,41 +72,29 @@ var resultsCmd = &cobra.Command{
 
 	It takes ~30 votes to start to get meaningful data.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("results called")
-
 		defaultStyles := table.DefaultStyles()
 
 		styles := table.Styles{
 			Cell:   defaultStyles.Cell,
 			Header: defaultStyles.Header,
-			// Selected: defaultStyles.Cell,
+		}
+
+		results, err := getRankedResults()
+		check(err)
+		var rows [][]string
+
+		for _, result := range results {
+			rows = append(rows, []string{fmt.Sprintf("%d", result.Rank + 1), result.Label, fmt.Sprintf("%f", result.Score)})
 		}
 
 		table := ltable.New().Headers("Rank", "Option", "Score").
-			Row("1", "Good Book", "10.4930430").
-			Row("2", "Something else", "5.4930430").
-			Row("3", "take a nap", "3.4930430").
-			Row("4", "think about savingss", "2.4930430").
-			Row("5", "cook a meal", "1.4930430").
+		  Rows(rows...).
 			StyleFunc(func(row, _ int) lipgloss.Style {
 				if row == 0 {
 					return styles.Header
 				}
 				return styles.Cell
 			})
-		// StyleFunc(func(row, col int) lipgloss.Style {
-		// switch {
-		// case row == 0:
-		// return Hea
-		// })
-
-		// t := table.New(
-		// table.WithColumns(columns),
-		// table.WithRows(rows),
-		// table.WithFocused(true),
-		// table.WithHeight(10),
-		// )
-
 		fmt.Println(table.Render())
 	},
 }
