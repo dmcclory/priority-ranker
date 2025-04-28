@@ -5,12 +5,13 @@ package cmd
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/charmbracelet/huh"
 	"github.com/spf13/cobra"
 )
 
-var choice = ""
+var choice uint
 
 // voteCmd represents the vote command
 var voteCmd = &cobra.Command{
@@ -21,14 +22,48 @@ var voteCmd = &cobra.Command{
 	The choice will be recorded and used as part of the ranking computation`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("vote called")
-		huh.NewSelect[string]().
+		listData := loadLists()
+
+		db, err := loadDb(dbPath(listData.ActiveList))
+		check(err)
+
+		options, err := loadOptions(db)
+		check(err)
+
+		if len(options) < 2 {
+			fmt.Println("There aren't enough options to rank! Add more")
+			return
+		}
+
+		rand.Shuffle(len(options), func(i, j int) {
+			options[i], options[j] = options[j], options[i]
+		})
+
+		option1 := options[0]
+		option2 := options[1]
+
+		huh.NewSelect[uint]().
 			Title("Which is more important?").
 			Options(
-				huh.NewOption("Cool Choice 1", "cool-choice"),
-				huh.NewOption("Cool Choice 2", "cool-choice-2"),
+				huh.NewOption(option1.Label, option1.ID),
+				huh.NewOption(option2.Label, option2.ID),
 			).
 			Value(&choice).Run()
-		fmt.Println("vote result: ", choice)
+
+		var winnerId, loserId uint
+		if choice == option1.ID {
+			winnerId = option1.ID
+			loserId = option2.ID
+		} else {
+			winnerId = option2.ID
+			loserId = option1.ID
+		}
+		err = addVote(db, winnerId, loserId)
+		if err != nil {
+			fmt.Printf("We were not able to save your vote because: %e\n", err)
+		} else {
+			fmt.Println("Your vote has been recorded!")
+		}
 	},
 }
 

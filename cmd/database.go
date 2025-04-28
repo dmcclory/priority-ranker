@@ -41,10 +41,10 @@ func initDb(path string) (*gorm.DB, error) {
 	return db, nil
 }
 
-func loadOptions(db *gorm.DB) []Option {
+func loadOptions(db *gorm.DB) ([]Option, error) {
 	var options []Option
-	db.Find(&options)
-	return options
+	err := db.Find(&options).Error
+	return options, err
 }
 
 func getOption(db *gorm.DB, optionId uint64) (Option, error) {

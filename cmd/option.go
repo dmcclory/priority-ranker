@@ -50,7 +50,8 @@ to quickly create a Cobra application.`,
 		listData := loadLists()
 		db, err := loadDb(dbPath(listData.ActiveList))
 		check(err)
-		options := loadOptions(db)
+		options, err := loadOptions(db)
+		check(err)
 
 		if len(options) == 0 {
 			fmt.Println(formatEmptyState())
