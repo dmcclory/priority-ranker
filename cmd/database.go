@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
+	"time"
 	"gorm.io/gorm/logger"
 )
 
@@ -35,6 +36,7 @@ func initDb(path string) (*gorm.DB, error) {
 	}
 
 	db.AutoMigrate(&Option{})
+	db.AutoMigrate(&Vote{})
 
 	return db, nil
 }
@@ -87,4 +89,20 @@ func removeOption(db *gorm.DB, optionId uint64) error {
 	err := db.Delete(&Option{}, optionId).Error
 
 	return err
+}
+
+func addVote(db *gorm.DB, winnerId uint, loserId uint) error {
+	createdAt := time.Now().Unix()
+	vote := Vote{WinnerId: winnerId, LoserId: loserId, CreatedAt: createdAt}
+
+	result := db.Create(&vote).Error
+
+	return result
+}
+
+func loadVotes(db *gorm.DB) ([]Vote, error) {
+	var votes []Vote
+	err := db.Find(&votes).Error
+
+	return votes, err
 }
