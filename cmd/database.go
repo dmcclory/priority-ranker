@@ -106,3 +106,9 @@ func loadVotes(db *gorm.DB) ([]Vote, error) {
 
 	return votes, err
 }
+
+func deleteVotes(db *gorm.DB, voteId uint) (int64, error) {
+	result := db.Where("winner_id = ? or loser_id = ?", voteId, voteId).Delete(&Vote{})
+
+	return result.RowsAffected, result.Error
+}

@@ -218,3 +218,46 @@ func TestLoadVotesReturnsListofVotes(t *testing.T) {
 		t.Fatalf("loadVotes - expected 4 results, but got %d", len(votes))
 	}
 }
+
+func TestDeleteVotesRemovesBothWinningAndLosingRows(t *testing.T) {
+	tempdir, err := os.MkdirTemp("", "test")
+	check(err)
+	t.Setenv("RANKER_DIR", tempdir)
+
+	if fileExists(dbPath("test-db")) {
+		t.Errorf("test setup failed -found database that should not exist")
+	}
+
+	db, err := initDb(dbPath("test-db"))
+
+	err = addVote(db, 1, 2)
+	err = addVote(db, 1, 3)
+	err = addVote(db, 2, 4)
+	err = addVote(db, 5, 1)
+
+	votes, err := loadVotes(db)
+
+	if err != nil {
+		t.Fatalf("loadVotes failed with error: %e", err)
+	}
+
+	if len(votes) != 4 {
+		t.Fatalf("loadVotes - expected 4 results, but got %d", len(votes))
+	}
+
+	total, err := deleteVotes(db, 1)
+
+	if err != nil {
+		t.Fatalf("deleteVotes failed with error: %e", err)
+	}
+
+	if total != 3 {
+		t.Fatalf("deleteVotes should have deleted 3 entries, but deleted %d", total)
+	}
+
+	votes, err = loadVotes(db)
+
+	if votes[0].WinnerId != 2 {
+		t.Fatalf("there should only be 1 Vote with winner id = 2, but got: %v", votes)
+	}
+}
