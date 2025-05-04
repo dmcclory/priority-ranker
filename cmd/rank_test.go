@@ -20,6 +20,26 @@ func buildExample() WinRecord {
 	}
 }
 
+func buildWinRecordAllZeroes() WinRecord {
+
+	return WinRecord{
+		1: {2: 0, 3: 0, 4: 0},
+		2: {1: 0, 3: 0, 4: 0},
+		3: {1: 0, 2: 0, 4: 0},
+		4: {1: 0, 2: 0, 3: 0},
+	}
+}
+
+func buildWinRecordOneIsUndefeated() WinRecord {
+
+	return WinRecord{
+		1: {2: 1, 3: 1, 4: 1},
+		2: {1: 0, 3: 0, 4: 0},
+		3: {1: 0, 2: 0, 4: 0},
+		4: {1: 0, 2: 0, 3: 0},
+	}
+}
+
 func buildInitialPScores() PScores {
 
 	return PScores{
@@ -37,29 +57,41 @@ func buildInitialPScores() PScores {
 
 func TestCalculateNumeratorTable(t *testing.T) {
 	// based on: https://go.dev/wiki/TableDrivenTests#using-a-map-to-store-test-cases
+	wins := buildExample()
+	allZeroes := buildWinRecordAllZeroes()
+	undefeatedOne := buildWinRecordOneIsUndefeated()
+	pScores := buildInitialPScores()
+
 	tests := map[string]struct {
 		i uint
 		j uint
 		result float64
+		wins WinRecord
 	} {
 		"numerator with 1, 2": {
-			i: 1, j: 2, result: 1,
+			i: 1, j: 2, result: 1, wins: wins,
 		},
 		"numerator with 1, 3": {
-			i: 1, j: 3, result: 0,
+			i: 1, j: 3, result: 0, wins: wins,
 		},
 		"numerator with 1, 4": {
-			i: 1, j: 4, result: 0.5,
+			i: 1, j: 4, result: 0.5, wins: wins,
+		},
+		"numerator with all zeros": {
+			i: 1, j: 4, result: 0, wins: allZeroes,
+		},
+		"numerator with undefeated 1": {
+			i: 1, j: 2, result: 0.5, wins: undefeatedOne,
+		},
+		"numerator with undefeated 1, inverse": {
+			i: 2, j: 1, result: 0, wins: undefeatedOne,
 		},
 	}
-
-	wins := buildExample()
-	pScores := buildInitialPScores()
 
 	for name, test := range tests {
 		test := test
 		t.Run(name, func(t *testing.T) {
-			if got, expected := calcNumerator(wins, pScores, test.i, test.j), test.result; got != expected {
+			if got, expected := calcNumerator(test.wins, pScores, test.i, test.j), test.result; got != expected {
 				t.Fatalf("calcNumerator with %d and %d returned %f, expected %f", test.i, test.j, got, expected)
 			}
 		})
