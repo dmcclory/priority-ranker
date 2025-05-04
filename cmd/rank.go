@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"slices"
+	"math"
 )
 
 type WinRecord map[uint]map[uint]int64
@@ -25,11 +26,21 @@ func buildWinRecordFromVotes(votes []Vote, optionIds []uint) WinRecord {
 }
 
 func calcNumerator(wins WinRecord, pScores PScores, i uint, j uint) float64 {
-	return (float64(wins[i][j]) * pScores[j]) / (pScores[i] + pScores[j])
+	res := (float64(wins[i][j]) * pScores[j]) / (pScores[i] + pScores[j])
+	if math.IsNaN(res) {
+		return 0
+	} else {
+		return res
+	}
 }
 
 func calcDenominator(wins WinRecord, pScores PScores, i uint, j uint) float64 {
-	return (float64(wins[j][i])) / (pScores[i] + pScores[j])
+	res := (float64(wins[j][i])) / (pScores[i] + pScores[j])
+	if math.IsNaN(res) {
+		return 0
+	} else {
+		return res
+	}
 }
 
 func calcPScore(wins WinRecord, pScores PScores, i uint) float64 {
