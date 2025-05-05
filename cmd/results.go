@@ -71,6 +71,7 @@ var resultsCmd = &cobra.Command{
 	Long: `Prints a table of the relative ranking of the options, based on your vote history.
 
 	It takes ~30 votes to start to get meaningful data.`,
+	Aliases: []string{"result", "rankings"},
 	Run: func(cmd *cobra.Command, args []string) {
 		defaultStyles := table.DefaultStyles()
 
