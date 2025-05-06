@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -63,6 +64,8 @@ func updateActiveList(listId string, lists ListConfig) {
 
 func persistListConfig(lists ListConfig) {
 	data, err := json.Marshal(lists)
+	check(err)
+	err = os.MkdirAll(filepath.Dir(configPath()),  0750)
 	check(err)
 	err = os.WriteFile(configPath(), data, 0644)
 	check(err)
