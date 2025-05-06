@@ -96,6 +96,25 @@ func TestLoadListsWhenConfigDoesNotExistYet(t *testing.T) {
 	}
 }
 
+func TestCanAddANewListConfigToAnEmptyConfigStruct(t *testing.T) {
+	tempdir, err := os.MkdirTemp("", "test")
+	check(err)
+	t.Setenv("RANKER_DIR", tempdir)
+
+	lists := loadLists()
+
+	if len(lists.Lists) != 0 {
+		t.Errorf("Adding to empty state test, expected Lists to be an empty map")
+	}
+
+	lists, err = addNewOptionList(lists, "Cool New List")
+
+	if len(lists.Lists) != 1 {
+		t.Errorf("Adding to empty state test, expected Lists to have one item")
+	}
+
+}
+
 func TestMarkEntryAsHavingDb(t *testing.T) {
 	tempdir, err := os.MkdirTemp("", "test")
 	check(err)

@@ -112,7 +112,7 @@ func markListEntryAsHavingDb(listId string, lists ListConfig) {
 
 func loadLists() ListConfig {
 	if fileDoesNotExist(configPath()) {
-		return ListConfig{}
+		return ListConfig{Lists: map[string]OptionList{}}
 	}
 
 	data, err := os.ReadFile(configPath())
