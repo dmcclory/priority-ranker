@@ -55,9 +55,12 @@ var listInitCmd = &cobra.Command{
 	The new list will become the 'active' list.
 	You can pass in a path to a file of options. Each unique line in the file will be stored as an option`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("listInit called")
 		lists := loadLists()
 		listName := strings.Join(args, " ")
+		if listName == ""{
+			fmt.Printf("No list name given, exiting\n")
+			return
+		}
 		lists, err := addNewOptionList(lists, listName)
 		if errors.Is(err, OptionListExists) {
 			fmt.Printf("A file already exists named %s, remove it or pick a new name\n", listName)
