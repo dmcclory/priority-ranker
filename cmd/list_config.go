@@ -33,7 +33,7 @@ func rankerDir() string {
 
 	homedir, err := os.UserHomeDir()
 	check(err)
-	return path.Join(homedir, ".ranker")
+	return path.Join(homedir, ".config/ranker")
 }
 
 func configPath() string {
