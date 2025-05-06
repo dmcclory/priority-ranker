@@ -13,7 +13,8 @@ import (
 var listDeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a list",
-	Long:  `Deletes the list. Be careful! This operation is irreversible`,
+	Long:  `
+Deletes the list. Be careful! This operation is irreversible`,
 	Run: func(cmd *cobra.Command, args []string) {
 		lists := loadLists()
 		listId := args[0]

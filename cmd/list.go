@@ -39,8 +39,9 @@ func emptyStateMessage() string {
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "See an index of the existing lists",
-	Long: `This is a shell command that shows all of the current lists.
-	Use the init, delete, and switch subcommands on individual lists.`,
+	Long: `
+This is a shell command that shows all of the current lists.
+Use the init, delete, and switch subcommands on individual lists.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		listData := loadLists()
 

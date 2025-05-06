@@ -19,7 +19,8 @@ var optionRemoveCmd = &cobra.Command{
 	Use:   "remove",
 	Aliases: []string{"delete"},
 	Short: "Remove an option from the active list of options",
-	Long: `Removes an option from the active list of options. Pass the numeric id for the option you wish to remove.
+	Long: `
+Removes an option from the active list of options. Pass the numeric id for the option you wish to remove.
 You can see the option ids by running 'ranker options'.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {

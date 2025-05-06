@@ -13,13 +13,13 @@ import (
 
 var choice uint
 
-// voteCmd represents the vote command
 var voteCmd = &cobra.Command{
 	Use:   "vote",
 	Short: "Choose between two random options",
-	Long: `Two options will be randomly drawn from the active list.
-	You can choose which is more important (according to whatever prioritization criteria you like).
-	The choice will be recorded and used as part of the ranking computation`,
+	Long: `
+Two options will be randomly drawn from the active list.
+You can choose which is more important (according to whatever prioritization criteria you like).
+The choice will be recorded and used as part of the ranking computation`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("vote called")
 		listData := loadLists()

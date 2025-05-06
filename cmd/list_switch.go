@@ -15,7 +15,8 @@ import (
 var listSwitchCmd = &cobra.Command{
 	Use:   "switch",
 	Short: "Switch to another list",
-	Long:  `Sets the current active list to the one provided.`,
+	Long:  `
+Sets the current active list to the one provided.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		lists := loadLists()
 

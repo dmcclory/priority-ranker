@@ -14,7 +14,8 @@ import (
 var optionAddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Adds a new option to the current list",
-	Long: `Adds a new option to the current list of options. If the input text is an exact match of an already existing option, it will be skipped.`,
+	Long: `
+Adds a new option to the current list of options. If the input text is an exact match of an already existing option, it will be skipped.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		option := strings.Join(args, " ")
 

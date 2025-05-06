@@ -13,7 +13,8 @@ import (
 var listCurrentCmd = &cobra.Command{
 	Use:   "current",
 	Short: "Show information about the current active list",
-	Long:  `Prints out data about the current list of options which you are ranking.`,
+	Long:  `
+Prints out data about the current list of options which you are ranking.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("listCurrent called")
 		fmt.Println("it would be nice to give this a little table")

@@ -37,13 +37,10 @@ func formatEmptyState() string {
 var optionCmd = &cobra.Command{
 	Use:     "option",
 	Aliases: []string{"options"},
-	Short:   "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short:   "Shows the options for the current list",
+	Long: `
+This prints out the options in the current list.
+You can use the 'option add' and 'option remove' subcommands to add/remove options.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// db := initDb(dbPath("sqlite-testing"))
 		// db.Create(&Option{Label: "Test Option"})
