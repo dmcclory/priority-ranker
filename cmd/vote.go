@@ -42,13 +42,24 @@ The choice will be recorded and used as part of the ranking computation`,
 		option1 := options[0]
 		option2 := options[1]
 
-		huh.NewSelect[uint]().
-			Title("Which is more important?").
-			Options(
-				huh.NewOption(option1.Label, option1.ID),
-				huh.NewOption(option2.Label, option2.ID),
-			).
-			Value(&choice).Run()
+		form := huh.NewForm(
+			huh.NewGroup(
+				huh.NewSelect[uint]().
+					Title("Which is more important?").
+					Options(
+						huh.NewOption(option1.Label, option1.ID),
+						huh.NewOption(option2.Label, option2.ID),
+					).
+				Value(&choice),
+			),
+		)
+
+		err = form.Run()
+
+		if err != nil {
+			fmt.Println("you cancelled the vote! - not voting!")
+			return
+		}
 
 		var winnerId, loserId uint
 		if choice == option1.ID {
