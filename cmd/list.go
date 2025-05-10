@@ -5,29 +5,47 @@ package cmd
 
 import (
 	"fmt"
-	"strconv"
 	"time"
+	"os"
 
+	"github.com/charmbracelet/lipgloss"
 	ltable "github.com/charmbracelet/lipgloss/table"
 	"github.com/spf13/cobra"
 )
 
 func formatListTable(lists []OptionList) string {
 	var rows [][]string
+	var activeRow int
 
-	for _, list := range lists {
+	for i, list := range lists {
 		created := time.Unix(int64(list.CreatedAt), 0)
-		timestamp := fmt.Sprintf("%d/%d/%d", created.Year(), created.Month(), created.Day())
+		timestamp := fmt.Sprintf("%02d/%02d/%d", created.Month(), created.Day(), created.Year())
+		if list.Active {
+			activeRow = i
+		}
 		var warning string
 		if !list.DbExists {
 			warning = "DB is missing"
 		}
-		rows = append(rows, []string{list.Name, strconv.FormatBool(list.Active), timestamp, warning})
+		rows = append(rows, []string{list.Name, timestamp, warning})
 	}
+
+	re := lipgloss.NewRenderer(os.Stdout)
+	activeStyle := re.NewStyle().Bold(true)
+	inactiveStyle := re.NewStyle().Bold(false)
 
 	// this -> https://github.com/charmbracelet/lipgloss/blob/master/table/table_test.go
 	// was helpful for understanding how to construct these tables
-	table := ltable.New().Rows(rows...).Headers("List", "Active", "Created On", "Warning")
+	table := ltable.New().
+		Rows(rows...).
+		Headers("List", "Created On", "Warning").
+		StyleFunc(func(row, col int) lipgloss.Style {
+			if row == activeRow {
+				return activeStyle
+			} else {
+				return inactiveStyle
+			}
+		})
 
 	return table.Render()
 }
