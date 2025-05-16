@@ -6,12 +6,22 @@ package cmd
 import (
 	"fmt"
 	"math/rand"
+	"os"
 
 	"github.com/charmbracelet/huh"
 	"github.com/spf13/cobra"
 )
 
 var choice uint
+
+func getPrompt() string {
+	prompt := os.Getenv("RANKER_PROMPT")
+	if prompt != "" {
+		return prompt
+	} else {
+		return "Which is more important?"
+	}
+}
 
 var voteCmd = &cobra.Command{
 	Use:   "vote",
@@ -42,10 +52,12 @@ The choice will be recorded and used as part of the ranking computation`,
 		option1 := options[0]
 		option2 := options[1]
 
+		prompt := getPrompt()
+
 		form := huh.NewForm(
 			huh.NewGroup(
 				huh.NewSelect[uint]().
-					Title("Which is more important?").
+					Title(prompt).
 					Options(
 						huh.NewOption(option1.Label, option1.ID),
 						huh.NewOption(option2.Label, option2.ID),
