@@ -9,9 +9,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var version = "0.0.1"
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "ranker",
+	Version: version,
 	Short: "a tool for finding the relative priority in a group of options",
 	Long: `
 ranker is a tool for finding the priority in a list of options.
