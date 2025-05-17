@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"gorm.io/gorm"
 
 	"github.com/charmbracelet/huh"
 	"github.com/spf13/cobra"
@@ -27,6 +28,59 @@ func getPrompt(listData ListConfig) string {
 	return "Which is more important?"
 }
 
+var loopVoting bool
+var keepLooping bool
+
+func vote(db *gorm.DB, options []Option, listData ListConfig) {
+	rand.Shuffle(len(options), func(i, j int) {
+		options[i], options[j] = options[j], options[i]
+	})
+
+	option1 := options[0]
+	option2 := options[1]
+
+	prompt := getPrompt(listData)
+
+	form := huh.NewForm(
+		huh.NewGroup(
+			huh.NewSelect[uint]().
+				Title(prompt).
+				Options(
+					huh.NewOption(option1.Label, option1.ID),
+					huh.NewOption(option2.Label, option2.ID),
+				).
+			Value(&choice),
+		),
+	)
+	err := form.Run()
+
+	if err != nil {
+		if loopVoting == true {
+			fmt.Println("ok! - done looping!")
+			keepLooping = false
+		} else {
+			fmt.Println("you cancelled the vote! - not voting!")
+		}
+		return
+	}
+
+	var winnerId, loserId uint
+	if choice == option1.ID {
+		winnerId = option1.ID
+		loserId = option2.ID
+	} else {
+		winnerId = option2.ID
+		loserId = option1.ID
+	}
+
+	err = addVote(db, winnerId, loserId)
+	if err != nil {
+		fmt.Printf("We were not able to save your vote because: %e\n", err)
+	} else {
+		fmt.Println("Your vote has been recorded!")
+	}
+}
+
 var voteCmd = &cobra.Command{
 	Use:   "vote",
 	Short: "Choose between two random options",
@@ -35,7 +89,7 @@ Two options will be randomly drawn from the active list.
 You can choose which is more important (according to whatever prioritization criteria you like).
 The choice will be recorded and used as part of the ranking computation`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("vote called")
+		fmt.Println("vote called and loopVoting is?", loopVoting)
 		listData := loadLists()
 
 		db, err := loadDb(dbPath(listData.ActiveList))
@@ -49,53 +103,20 @@ The choice will be recorded and used as part of the ranking computation`,
 			return
 		}
 
-		rand.Shuffle(len(options), func(i, j int) {
-			options[i], options[j] = options[j], options[i]
-		})
-
-		option1 := options[0]
-		option2 := options[1]
-
-		prompt := getPrompt(listData)
-
-		form := huh.NewForm(
-			huh.NewGroup(
-				huh.NewSelect[uint]().
-					Title(prompt).
-					Options(
-						huh.NewOption(option1.Label, option1.ID),
-						huh.NewOption(option2.Label, option2.ID),
-					).
-				Value(&choice),
-			),
-		)
-
-		err = form.Run()
-
-		if err != nil {
-			fmt.Println("you cancelled the vote! - not voting!")
-			return
-		}
-
-		var winnerId, loserId uint
-		if choice == option1.ID {
-			winnerId = option1.ID
-			loserId = option2.ID
+		if loopVoting {
+			keepLooping = true
+			for keepLooping == true {
+				vote(db, options, listData)
+			}
 		} else {
-			winnerId = option2.ID
-			loserId = option1.ID
-		}
-		err = addVote(db, winnerId, loserId)
-		if err != nil {
-			fmt.Printf("We were not able to save your vote because: %e\n", err)
-		} else {
-			fmt.Println("Your vote has been recorded!")
+				vote(db, options, listData)
 		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(voteCmd)
+	voteCmd.Flags().BoolVarP(&loopVoting, "loop", "l", false, "loop voting")
 
 	// Here you will define your flags and configuration settings.
 
