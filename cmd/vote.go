@@ -41,6 +41,15 @@ func vote(db *gorm.DB, options []Option, listData ListConfig) {
 
 	prompt := getPrompt(listData)
 
+	if loopVoting {
+		votes, err := loadVotes(db)
+		if err != nil {
+			fmt.Errorf("error while trying to get the vote count: %s", err)
+			return
+		}
+		prompt = prompt + fmt.Sprintf(" (%d total votes)", len(votes))
+	}
+
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[uint]().
@@ -76,8 +85,6 @@ func vote(db *gorm.DB, options []Option, listData ListConfig) {
 	err = addVote(db, winnerId, loserId)
 	if err != nil {
 		fmt.Printf("We were not able to save your vote because: %e\n", err)
-	} else {
-		fmt.Println("Your vote has been recorded!")
 	}
 }
 
@@ -109,7 +116,8 @@ The choice will be recorded and used as part of the ranking computation`,
 				vote(db, options, listData)
 			}
 		} else {
-				vote(db, options, listData)
+			vote(db, options, listData)
+			fmt.Println("Your vote has been recorded!")
 		}
 	},
 }
