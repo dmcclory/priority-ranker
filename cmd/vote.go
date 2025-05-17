@@ -94,7 +94,10 @@ var voteCmd = &cobra.Command{
 	Long: `
 Two options will be randomly drawn from the active list.
 You can choose which is more important (according to whatever prioritization criteria you like).
-The choice will be recorded and used as part of the ranking computation`,
+The choice will be recorded and used as part of the ranking computation
+
+Use the '--loop' flag to vote repeatedly (Ctrl-C to stop)
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("vote called and loopVoting is?", loopVoting)
 		listData := loadLists()

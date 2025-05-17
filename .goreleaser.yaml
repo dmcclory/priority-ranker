@@ -8,6 +8,9 @@
 
 version: 2
 
+release:
+  disable: "{{index .Env \"NIGHTLY\"}}"
+
 before:
   hooks:
     # You may remove this if you don't use go modules.
@@ -44,10 +47,3 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
-
-release:
-  footer: >-
-
-    ---
-
-    Released by [GoReleaser](https://github.com/goreleaser/goreleaser).
