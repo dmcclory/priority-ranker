@@ -49,6 +49,7 @@ func dbPath(listId string) string {
 type ListConfig struct {
 	ActiveList string                `json:"active"`
 	Lists      map[string]OptionList `json:"lists"`
+	GlobalPrompt string              `json:"prompt"`
 }
 
 func check(e error) {
@@ -190,4 +191,14 @@ func deleteList(lists ListConfig, listId string) (ListConfig, error) {
 	delete(lists.Lists, listId)
 
 	return lists, nil
+}
+
+func getGlobalPrompt(lists ListConfig) string {
+	return lists.GlobalPrompt
+}
+
+func setGlobalPrompt(lists ListConfig, newPrompt string) ListConfig {
+	lists.GlobalPrompt = newPrompt
+	persistListConfig(lists)
+	return lists
 }

@@ -14,13 +14,17 @@ import (
 
 var choice uint
 
-func getPrompt() string {
+func getPrompt(listData ListConfig) string {
 	prompt := os.Getenv("RANKER_PROMPT")
 	if prompt != "" {
 		return prompt
-	} else {
-		return "Which is more important?"
 	}
+	globalPrompt := listData.GlobalPrompt
+	if globalPrompt != "" {
+		return globalPrompt
+	}
+
+	return "Which is more important?"
 }
 
 var voteCmd = &cobra.Command{
@@ -52,7 +56,7 @@ The choice will be recorded and used as part of the ranking computation`,
 		option1 := options[0]
 		option2 := options[1]
 
-		prompt := getPrompt()
+		prompt := getPrompt(listData)
 
 		form := huh.NewForm(
 			huh.NewGroup(

@@ -201,3 +201,33 @@ func TestDeleteListRemovesEntryAndFile(t *testing.T) {
 		t.Errorf("Expected the active list value to be cleared out, but it was not")
 	}
 }
+
+func TestGetGlobalPromptDefaultsToBlank(t *testing.T) {
+	tempdir, err := os.MkdirTemp("", "test")
+	check(err)
+	t.Setenv("RANKER_DIR", tempdir)
+	persistListConfig(getListsAsMap())
+	lists := loadLists()
+
+	globalPrompt := getGlobalPrompt(lists)
+
+	if globalPrompt != "" {
+		t.Error("expected global prompt to eq: 'what do you think?'")
+	}
+}
+
+func TestSettingGlobalPrompt(t *testing.T) {
+	tempdir, err := os.MkdirTemp("", "test")
+	check(err)
+	t.Setenv("RANKER_DIR", tempdir)
+	persistListConfig(getListsAsMap())
+	lists := loadLists()
+
+	lists = setGlobalPrompt(lists, "What should the new prompt be?")
+
+	globalPrompt := getGlobalPrompt(lists)
+
+	if globalPrompt != "What should the new prompt be?" {
+		t.Error("expected global prompt to eq: 'What should the new prompt be?', but got:", globalPrompt)
+	}
+}

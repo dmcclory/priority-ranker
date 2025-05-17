@@ -155,4 +155,3 @@ func deleteOptionAndVotes(db *gorm.DB, optionId uint) error {
 
 	return nil
 }
-

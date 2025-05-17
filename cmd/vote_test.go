@@ -7,7 +7,8 @@ import (
 )
 
 func TestGetPromptWithNoEnvVarOrSettingUsesDefault(t *testing.T) {
-	res := getPrompt()
+	listConfig := getListsAsMap()
+	res := getPrompt(listConfig)
 
 	if res != "Which is more important?" {
 		t.Errorf("Expected the default prompt to be 'Which is more important?'")
@@ -15,10 +16,21 @@ func TestGetPromptWithNoEnvVarOrSettingUsesDefault(t *testing.T) {
 }
 
 func TestGetPromptWithEnvVarOverride(t *testing.T) {
+	listConfig := getListsAsMap()
 	t.Setenv("RANKER_PROMPT", "Custom prompt")
-	res := getPrompt()
+	res := getPrompt(listConfig)
 
 	if res != "Custom prompt" {
 		t.Errorf("Expected the default prompt to be 'Custom prompt'")
+	}
+}
+
+func TestGetPromptWithEnvVarGlobalPromptSet(t *testing.T) {
+	listConfig := getListsAsMap()
+	listConfig.GlobalPrompt = "A Global Prompt"
+	res := getPrompt(listConfig)
+
+	if res != "A Global Prompt" {
+		t.Errorf("Expected the default prompt to be 'A Global Prompt'")
 	}
 }
