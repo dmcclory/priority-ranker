@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/charmbracelet/lipgloss"
 	ltable "github.com/charmbracelet/lipgloss/table"
 	"github.com/spf13/cobra"
 )
@@ -24,13 +23,7 @@ func formatOptionTable(options []Option) string {
 }
 
 func formatEmptyState() string {
-  style := lipgloss.NewStyle().
-    Bold(true).
-    PaddingTop(1).
-    PaddingLeft(4).
-    Foreground(lipgloss.Color("5"))
-
-  return style.Render("There are no options in the list, use `ranker option add` to add some!")
+  return warningStyle().Render("There are no options in the list, use `ranker option add` to add some!")
 }
 
 // optionCmd represents the option command

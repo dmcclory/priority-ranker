@@ -27,6 +27,18 @@ func TestMarkActiveMap(t *testing.T) {
 	}
 }
 
+func TestMarkActiveMapWhenNoListIsActive(t *testing.T) {
+	lists := getListsAsMap()
+
+	lists.ActiveList = ""
+
+	markListEntryAsActive("", lists)
+
+	if len(lists.Lists) != 3 {
+		t.Errorf("expected the number of elements in the list to eq %d after markListEntryAsActive but got %d", 3, len(lists.Lists))
+	}
+}
+
 func TestGenerateId(t *testing.T) {
 	id := generateId("Input Is Good")
 

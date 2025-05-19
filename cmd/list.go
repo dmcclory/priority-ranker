@@ -15,7 +15,7 @@ import (
 
 func formatListTable(lists []OptionList) string {
 	var rows [][]string
-	var activeRow int
+	activeRow := -1
 
 	for i, list := range lists {
 		created := time.Unix(int64(list.CreatedAt), 0)
@@ -66,14 +66,15 @@ Use the init, delete, and switch subcommands on individual lists.`,
 		if len(listData.Lists) == 0 {
 			fmt.Println(emptyStateMessage())
 		} else {
-			// gotta figure out how to test this method
-			// lists := markListEntryAsActiveMap(listData, listData.ActiveList)
 			markListEntryAsActive(listData.ActiveList, listData)
 			lists := []OptionList{}
 			for _, v := range listData.Lists {
 				lists = append(lists, v)
 			}
 			fmt.Println(formatListTable(lists))
+			if listData.ActiveList == "" {
+				fmt.Println(warningStyle().Render("None of these lists currently active!, use `list switch $LIST_ID` to make one active"))
+			}
 		}
 	},
 }

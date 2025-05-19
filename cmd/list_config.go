@@ -73,10 +73,11 @@ func persistListConfig(lists ListConfig) {
 }
 
 func markListEntryAsActive(listId string, lists ListConfig) {
-	// optional: mark all others as false
-	listCopy := lists.Lists[listId]
-	listCopy.Active = true
-	lists.Lists[listId] = listCopy
+	if listId != "" {
+		listCopy := lists.Lists[listId]
+		listCopy.Active = true
+		lists.Lists[listId] = listCopy
+	}
 }
 
 func fileDoesNotExist(path string) bool {
