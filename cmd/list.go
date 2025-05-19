@@ -64,7 +64,7 @@ Use the init, delete, and switch subcommands on individual lists.`,
 		listData := loadLists()
 
 		if len(listData.Lists) == 0 {
-			fmt.Println(emptyStateMessage())
+			fmt.Println(warningStyle().Render(emptyStateMessage()))
 		} else {
 			markListEntryAsActive(listData.ActiveList, listData)
 			lists := []OptionList{}

@@ -75,6 +75,9 @@ You can pass in a path to a file of options. Each unique line in the file will b
 		}
 
 		db, err := initDb(dbPath(newListId))
+		if err != nil {
+			fmt.Printf("\nError while trying to create database: %v", err)
+		}
 		persistListConfig(lists)
 		fmt.Println("new list created & set to active")
 

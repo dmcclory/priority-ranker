@@ -27,6 +27,18 @@ func TestMarkActiveMap(t *testing.T) {
 	}
 }
 
+func TestLoadListsCreatesConfigDirectoryIfItDoesNotExists(t *testing.T) {
+	tempdir, err := os.MkdirTemp("", "test")
+	check(err)
+	t.Setenv("RANKER_DIR", tempdir)
+	os.Remove(tempdir)
+	loadLists()
+
+	if fileDoesNotExist(tempdir) {
+		t.Errorf("Expected non-existent RANKER_DIR to be created as part of calling loadLists, but it was not")
+	}
+}
+
 func TestMarkActiveMapWhenNoListIsActive(t *testing.T) {
 	lists := getListsAsMap()
 

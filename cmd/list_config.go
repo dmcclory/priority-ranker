@@ -116,6 +116,11 @@ func markListEntryAsHavingDb(listId string, lists ListConfig) {
 }
 
 func loadLists() ListConfig {
+	if fileDoesNotExist(rankerDir()) {
+		err := os.MkdirAll(rankerDir(),  0750)
+		check(err)
+	}
+
 	if fileDoesNotExist(configPath()) {
 		return ListConfig{Lists: map[string]OptionList{}}
 	}
