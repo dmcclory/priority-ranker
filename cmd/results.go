@@ -17,6 +17,7 @@ type RankedResult struct {
 	Rank uint
 	Label string
 	Score float64
+	ID uint
 }
 
 func getRankedResults() ([]RankedResult, error) {
@@ -58,6 +59,7 @@ func getRankedResults() ([]RankedResult, error) {
 		rankedResults = append(rankedResults, RankedResult{
 	    Rank: uint(i),
 			Label: option.Label,
+			ID: option.ID,
 			Score: ranks[option.ID],
 		})
 	}

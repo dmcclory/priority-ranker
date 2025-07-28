@@ -5,8 +5,10 @@ package cmd
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"os"
+
 	"gorm.io/gorm"
 
 	"github.com/charmbracelet/huh"
@@ -31,13 +33,46 @@ func getPrompt(listData ListConfig) string {
 var loopVoting bool
 var keepLooping bool
 
+type OptionLabel struct {
+	ID uint
+	Label string
+}
+
 func vote(db *gorm.DB, options []Option, listData ListConfig) {
-	rand.Shuffle(len(options), func(i, j int) {
-		options[i], options[j] = options[j], options[i]
+	rankedResults, err := getRankedResults()
+	check(err)
+
+	optionIds := []OptionLabel{}
+
+	for _, o := range rankedResults {
+		if math.IsInf(o.Score, 1) {
+			optionIds = append(optionIds, OptionLabel{Label: o.Label, ID: o.ID})
+		}
+	}
+
+	// if there are multiple options with an infinite score,
+	// we only want to vote on those (and break the tie)
+	// if there is only 1, we can vote on any of options
+	if len(optionIds) < 2 {
+		for _, o := range options {
+			optionIds = append(optionIds, OptionLabel{Label: o.Label, ID: o.ID})
+		}
+	}
+
+	rand.Shuffle(len(optionIds), func(i, j int) {
+		optionIds[i], optionIds[j] = optionIds[j], optionIds[i]
 	})
 
-	option1 := options[0]
-	option2 := options[1]
+	option1 := optionIds[0]
+	option2 := optionIds[1]
+
+	if option1.ID == option2.ID {
+		for _, o := range optionIds[2:] {
+			if o.ID != option1.ID {
+				option2 = o
+			}
+		}
+	}
 
 	prompt := getPrompt(listData)
 
@@ -61,7 +96,7 @@ func vote(db *gorm.DB, options []Option, listData ListConfig) {
 			Value(&choice),
 		),
 	)
-	err := form.Run()
+	err = form.Run()
 
 	if err != nil {
 		if loopVoting == true {
